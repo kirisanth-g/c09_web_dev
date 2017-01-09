@@ -6,6 +6,12 @@ body {
 	font-size: 14px;
 	color: #3C3D3F;
     text-align: left;
+    
+
+    max-width: 800px;   /* set the body to be 800px long */
+    margin: auto;       /* center the app in the middle of the browser window */ 
+
+
 }
 
 header{

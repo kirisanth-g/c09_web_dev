@@ -1,0 +1,23 @@
+.message{
+    margin-top:20px;
+    padding:20px 10px 10px 10px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.message .user_info{
+	flex-direction: column;
+	align-items: center;
+	align-content: center;
+}
+
+.message .content{
+	flex-grow: 2;
+	font-size: 20px;
+	padding:10px 20px 20px 10px;
+}
+
+.message .voting{
+	flex-direction: column;
+}
