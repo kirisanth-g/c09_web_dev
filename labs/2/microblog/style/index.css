@@ -1,4 +1,4 @@
-.message{
+.messages{
     margin-top:20px;
     padding:20px 10px 10px 10px;
     display:flex;
@@ -6,10 +6,29 @@
     align-items: center;
 }
 
+.message{
+    margin-top:20px;
+    padding:20px 10px 10px 10px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom-style: solid;
+    max-height: 150px;
+}
+
+.message img{
+	max-height: 60px;
+}
+
+.message .voting img{
+	max-height: 20px;
+}
+
 .message .user_info{
 	flex-direction: column;
 	align-items: center;
 	align-content: center;
+	max-height: 50px;
 }
 
 .message .content{
@@ -20,4 +39,8 @@
 
 .message .voting{
 	flex-direction: column;
+}
+
+.message .user_info .user_pic{
+	background-image: url("media/user.png"); 
 }

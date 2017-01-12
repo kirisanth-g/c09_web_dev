@@ -38,6 +38,10 @@ header h1{
     background-image: url('../media/close33.png');
 }
 
+#profile_button{
+    background-image: url('../media/user.png')
+}
+
 footer{
     margin-top: 20px;
     text-align:center;
