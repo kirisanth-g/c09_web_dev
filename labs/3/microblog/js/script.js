@@ -1,3 +1,4 @@
+/* jshint esversion: 6*/
 (function(){
     "use strict";
     document.getElementById("create_message_form").onsubmit = function(e){
@@ -23,5 +24,5 @@
             </div>`;
     // add this element to the document
     document.getElementById("messages").prepend(e);
-}   
+};
 }());
