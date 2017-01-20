@@ -1,0 +1,59 @@
+html {overflow: -moz-scrollbars-vertical;}
+
+body {
+	background: #FFFFFF;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #3C3D3F;
+    text-align: left;
+    
+
+    max-width: 800px;   /* set the body to be 800px long */
+    margin: auto;       /* center the app in the middle of the browser window */ 
+
+
+}
+
+header{
+    display:flex;
+    margin-top:25px;
+    margin-bottom: 15px;
+    justify-content:flex-end;
+}
+
+header h1{
+    margin: 0px;
+    padding-top:4px;
+    width:100%;
+    font-size:30px;
+}
+
+.header_button{
+    height: 64px;
+    width: 80px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.button{
+    border-radius:5px;
+    text-align:center;
+    font-size: 15px;
+    color: #3C3D3F;
+    background: #ffffff;
+    border: 2px #3C3D3F solid;
+    padding: 0px 5px 0px 5px;
+}
+
+/*#close_button{
+    background-image: url('../media/close33.png');
+}
+
+#profile_button{
+    background-image: url('../media/user.png')
+}*/
+
+footer{
+    margin-top: 20px;
+    text-align:center;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Photo Gala</title>
+	<link href="style/main.css" rel="stylesheet" type="text/css"/>
+	<link href="style/form.css" rel="stylesheet" type="text/css"/>
+</head>
+
+
+<body>
+	<header>
+		<h1>Photo Gala</h1>
+	</header>
+
+
+	<input type="button" class="button" id="upload_op" value="Upload a Photo">
+	<form class="complex_form" id="upload">
+		<div class="form_title">
+			<p>Upload a Photo</p>
+			<img id="upload_cls" src="media/nav-menu_close_icon.png">
+		</div>
+		<input class="form_element" id="upload_form_name" placeholder="Enter your name"></input>
+		<input class="form_element" id="upload_photo_name" placeholder="Enter photo's name"></input>
+		<div class="form_radio">
+			<input type="radio" name="type" value="URL">
+			<p>URL</p>
+			<input type="radio" name="type" value="File Upload">
+			<p>File Upload</p>
+		</div>
+		<input class="form_element" id="upload_url" placeholder="Enter your image url"></input>
+		<input type="file">
+		<input type="submit" class="btn">
+	</form>
+
+
+	<div class="display">
+		<div id="curr_pic" class="photo" ></div>
+		<div id="curr_info">
+			<p>Pic User</p>
+			<p>Pic Name</p>
+		</div>
+		<input type="button" class="button" onclick="alert('Del')" value="Delete">
+		<input type="button" class="button" onclick="alert('Prev')" value="Previous">
+		<input type="button" class="button" onclick="alert('Next')" value="Next">
+	</div>
+
+
+	<form class="comment_form" id="comment">
+		<div class="form_title">Write a Comment</div>
+		<input class="form_element" id="upload_form_name" placeholder="Enter your name"></input>
+		<input class="form_element" id="upload_photo_name" placeholder="Comment"></input>
+		<input type="submit" class="button" class="btn">
+	</form>
+
+
+	<footer>
+		<a href='/credits.html'>credits</a>
+	</footer>
+	<script src="js/view.js"></script>
+<!--     <script src="js/model.js"></script>
+		<script src="js/view.js"></script>
+		<script src="js/controller.js"></script> -->
+	</body>
+	</html>
