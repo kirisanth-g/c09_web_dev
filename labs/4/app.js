@@ -1,5 +1,7 @@
 var express = require('express');
 var app = express();
+app.use(express.static('frontend')); 
+
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
