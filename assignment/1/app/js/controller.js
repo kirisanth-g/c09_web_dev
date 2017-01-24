@@ -11,4 +11,9 @@
         model.uploadPicture(e.detail);
     });
 
+    //Taken from Lab5
+    document.addEventListener('documentLoaded', function (e) {
+        model.init();
+    });
+
 }(model, view))

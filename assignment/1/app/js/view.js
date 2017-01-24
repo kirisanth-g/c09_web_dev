@@ -3,6 +3,12 @@ var view = (function(){
 	var pictures = [];
 	var curr_pic_index;
 
+	//Taken form Lab5
+	window.onload = function scheduler(e){
+        document.dispatchEvent(new Event("documentLoaded"));
+    };
+    
+
 	document.getElementById("upload_op").onclick = function(e){
 		document.getElementById("upload").style.display = 'flex';
 		document.getElementById("upload_op").style.display = 'none';
