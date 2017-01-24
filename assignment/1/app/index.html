@@ -5,6 +5,7 @@
 	<title>Photo Gala</title>
 	<link href="style/main.css" rel="stylesheet" type="text/css"/>
 	<link href="style/form.css" rel="stylesheet" type="text/css"/>
+	<link href="style/viewer.css" rel="stylesheet" type="text/css"/>
 </head>
 
 
@@ -34,15 +35,15 @@
 	</form>
 
 
-	<div class="display">
-		<div id="curr_pic" class="photo" ></div>
+	<div class="viewer" id="display">
+<!-- 		<div id="curr_pic" class="photo" ></div>
 		<div id="curr_info">
 			<p>Pic User</p>
 			<p>Pic Name</p>
 		</div>
 		<input type="button" class="button" onclick="alert('Del')" value="Delete">
 		<input type="button" class="button" onclick="alert('Prev')" value="Previous">
-		<input type="button" class="button" onclick="alert('Next')" value="Next">
+		<input type="button" class="button" onclick="alert('Next')" value="Next"> -->
 	</div>
 
 
@@ -57,9 +58,8 @@
 	<footer>
 		<a href='/credits.html'>credits</a>
 	</footer>
+    <script src="js/model.js"></script>
 	<script src="js/view.js"></script>
-<!--     <script src="js/model.js"></script>
-		<script src="js/view.js"></script>
-		<script src="js/controller.js"></script> -->
+	<script src="js/controller.js"></script>
 	</body>
 	</html>

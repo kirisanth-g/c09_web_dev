@@ -1,0 +1,12 @@
+.viewer{
+    margin-top:10px;
+    padding:10px 10px 10px 10px;
+    /*display:flex;
+    flex-direction: column;*/
+}
+
+.viewer .photo{
+	width: 800px;
+	height: 500px;
+	object-fit: contain;
+}

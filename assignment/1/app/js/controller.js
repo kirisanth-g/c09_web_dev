@@ -6,8 +6,9 @@
     });
 
     // views events
-    document.addEventListener('formSubmitted', function (e) {
-         model.uploadPicture(e.detail);
+    document.addEventListener('uploadSubmitted', function (e) {
+    	console.log(e.detail);
+        model.uploadPicture(e.detail);
     });
 
 }(model, view))
