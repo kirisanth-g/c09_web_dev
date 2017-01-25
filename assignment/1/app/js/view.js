@@ -2,6 +2,7 @@ var view = (function(){
 	var view = {};
 	var pictures = [];
 	var curr_pic_index;
+	var msg_offset;
 
 
 	// --Taken form Lab5
@@ -89,6 +90,7 @@ var view = (function(){
 	view.insertPictures = function(pics){
 		pictures = pics;
 		curr_pic_index = pictures.length-1;
+		msg_offset = 0;
 		view.loadElements();
 	};
 
@@ -97,12 +99,6 @@ var view = (function(){
 		pictures = pics;
 		view.loadElements();
 	}
-
-	// Refreshed frontend to next/prev picture
-	view.changePic = function(i){
-		curr_pic_index = curr_pic_index + i;
-		view.loadElements();
-	};
 
 	// Locks and Unlocks next/prev buttons
 	view.checkBtn = function(){
@@ -202,29 +198,62 @@ var view = (function(){
 	view.loadMessages = function(){
 		var container = document.getElementById("messages");
 		container.innerHTML = "";
-				var messages = pictures[curr_pic_index].messages;
-				console.log(messages);
-				messages.forEach(function (message){
-					// create the message element
-						var e = document.createElement('div');
-						e.className = "message";
-						e.id = message.mid;
-						e.innerHTML = `
-										<div class="author">${message.msgauthor}</div>
-										<div class="content">${message.msgcontent}</div>`;
-						// add delete button
-						var deleteButton = document.createElement('div');
-						deleteButton.className = "delete-icon icon";
-						deleteButton.onclick = function (e){
-							var data = {};
-							data.mid = parseInt(e.target.parentNode.id);
-							data.id = pictures[curr_pic_index].id;
-							document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
-						};
-						e.append(deleteButton); 
-						// add this element to the document
-						container.prepend(e);
-				});
+		// Get the latest 10 comments
+		var messages = pictures[curr_pic_index].messages;
+		console.log(messages);
+		var len_msg = messages.length;
+		messages = messages.slice(len_msg - msg_offset, 10);
+		console.log(msg_offset, messages, len_msg);
+		messages.forEach(function (message){
+			// create the message element
+				var e = document.createElement('div');
+				e.className = "message";
+				e.id = message.mid;
+				e.innerHTML = `
+								<div class="author">${message.msgauthor}</div>
+								<div class="content">${message.msgcontent}</div>`;
+				// add delete button
+				var deleteButton = document.createElement('div');
+				deleteButton.className = "delete-icon icon";
+				deleteButton.onclick = function (e){
+					var data = {};
+					data.mid = parseInt(e.target.parentNode.id);
+					data.id = pictures[curr_pic_index].id;
+					document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
+				};
+				e.append(deleteButton); 
+				// add this element to the document
+				container.prepend(e);
+		});
+		// Set up msg buttons
+		var btn = document.createElement('div');
+		btn.class = "msg_btns";
+		btn.innerHTML= `
+		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="Previous">
+		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value="Next">`;
+		container.prepend(btn);
+		//view.checkMsgBtn();
+	};
+
+	// Refreshed frontend to next/prev picture
+	view.changeMsg = function(i){
+		msg_offset = msg_offset + i;
+		console.log(msg_offset);
+		view.loadMessages();
+	};
+
+	// Locks and Unlocks msg next/prev buttons
+	view.checkMsgBtn = function(){
+		if(curr_pic_index == pictures.length-1){
+			document.getElementById('msg_next').disabled = true;
+		}
+		if(curr_pic_index === 0){
+			document.getElementById('msg_prev').disabled = true;
+		}
+		if(0 < curr_pic_index && curr_pic_index < pictures.length-1){
+			document.getElementById('msg_next').disabled = false;
+			document.getElementById('msg_prev').disabled = false;
+		}
 	};
 
 	return view;
