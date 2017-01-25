@@ -8,18 +8,18 @@ var model = (function(){
 
     // Message constructor
     var Message = (function (){
-        var id = 0;
+        var mid = 0;
         return function Message(message){
-            if (message.id){
-                this.id = message.id;
-                id = (message.id>=id)? message.id+1 : id;
+            if (message.mid){
+                this.mid = message.mid;
+                mid = (message.mid>=mid)? message.mid+1 : mid;
             }else{
-                this.id = id++;
+                this.mid = mid++;
             }
-            this.content = message.content;
-            this.author = message.author;
+            this.msgcontent = message.msgcontent;
+            this.msgauthor = message.msgauthor;
             this.date = new Date();
-        }
+        };
     }());
 
     // Picture constructor
@@ -33,10 +33,16 @@ var model = (function(){
                 this.id = id++;
             }
             this.content = picture.content;
-            this.author = picture.username;
+            this.author = picture.author;
             this.link = picture.link;
-            this.messages = [];
-        }
+            if(picture.messages){
+                this.messages = picture.messages.map(function(msg){
+                    return new Message(msg);
+                });
+            }else{
+                this.messages = new Array();
+            }
+        };
     }());
 
     // init
@@ -51,18 +57,67 @@ var model = (function(){
         }
         // dispatch "messageUpdated"
         document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': pictures }));
-    }
+    };
 
     // create
     model.uploadPicture = function (data){
         // create the message
         var picture = new Picture(data);
         pictures.push(picture);
+        model.savePics();
+    };
+
+    // delete
+    model.deletePicture = function (data){
+        // select and delete message
+        pictures = pictures.filter(function(e){
+            return (e.id !== data.id);
+        });
+        model.savePics();
+    };
+
+    // save
+    model.saveToLocal = function(event){
         // update the local storage and dispatch "messageUpdated"
         localStorage.setItem("pictures", JSON.stringify(pictures));
-        document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': pictures }));
+        document.dispatchEvent(event);
+    };
+
+    //save pics
+    model.savePics = function(){
+        model.saveToLocal(new CustomEvent("pictureUpdated", {'detail': pictures }));
+    }
+
+    //save msg
+    model.saveMsg = function(){
+        model.saveToLocal(new CustomEvent("messageUpdated", {'detail': pictures }));
+    }
+
+    // create msg
+    model.uploadMessage = function(data, id){
+        // select and delete message
+        var picture = pictures.filter(function(e){
+            return (e.id === id);
+        });
+        picture = picture[0]
+        picture.messages.push(new Message(data));
+        model.saveMsg();
+    };
+
+    // create msg
+    model.deleteMessage = function(data){
+        // select and delete message
+        var picture = pictures.filter(function(e){
+            return (e.id === data.id);
+        });
+        console.log(picture, data);
+        picture = picture[0]
+        picture.messages = picture.messages.filter(function(me){
+            return(me.mid !== data.mid);
+        });
+        model.saveMsg();
     };
     
     return model;
 
-}())
+}());

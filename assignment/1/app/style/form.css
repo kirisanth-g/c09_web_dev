@@ -28,7 +28,6 @@
 
 .complex_form .form_title img{
   height: 35px;
-  background-image: url('../media/user.png')
 }
 .complex_form .form_radio{
     display:flex;
