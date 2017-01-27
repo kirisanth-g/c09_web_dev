@@ -3,14 +3,29 @@ var view = (function(){
 	var pictures = [];
 	var curr_pic_index;
 	var msg_offset;
+	var url_id;
 
 
 	// --Taken form Lab5
 	window.onload = function scheduler(e){
-				document.dispatchEvent(new Event("documentLoaded"));
-		};
+		url_id = getParameter('id');
+		document.dispatchEvent(new Event("documentLoaded"));
+	};
 
-		
+
+	// Taken form Techincal Overload
+	function getParameter(theParameter) { 
+		var params = window.location.search.substr(1).split('&');
+		for (var i = 0; i < params.length; i++) {
+			var p=params[i].split('=');
+			if (p[0] == theParameter) {
+				return decodeURIComponent(p[1]);
+			}
+		}
+		return false;
+	}
+
+
 	// Open Upload Photo Form
 	document.getElementById("upload_op").onclick = function(e){
 		document.getElementById("upload").style.display = 'flex';
@@ -85,11 +100,45 @@ var view = (function(){
 		}
 	};
 
+	//Find index of picture
+	findIndex = function(id){
+		for (var i = 0; i < pictures.length; i++){
+			if(pictures[i].id == id){
+				return i;
+			}
+		}
+	}
+
+	//404
+	view.set404 = function(){
+		var container = document.getElementsByTagName("BODY")[0];
+		var e = document.createElement('div');
+		e.className = "404";
+		e.id = "404";
+		e.innerHTML = `
+			<h1>404</h1>
+			<h3>Image Not Found</h3>`;
+		container.insertBefore(e, document.getElementsByTagName("FOOTER")[0]);
+	}
 
 	// Relaods all info and refreshed frontend to last picture
 	view.insertPictures = function(pics){
 		pictures = pics;
-		curr_pic_index = pictures.length-1;
+		if(url_id){
+			var id = findIndex(url_id);
+			console.log("found", id);
+			if(id >= 0){
+				curr_pic_index = id;
+				url_id ='';
+			}
+			//404
+			else{
+				return view.set404();
+			}		
+		}else{
+			curr_pic_index = pictures.length-1;
+		}
+		console.log("next", curr_pic_index);
 		msg_offset = 0;
 		view.loadElements();
 	};
@@ -99,6 +148,12 @@ var view = (function(){
 		pictures = pics;
 		view.loadElements();
 	}
+
+	// Refreshed frontend to next/prev picture
+	view.changePic = function(i){
+		curr_pic_index = curr_pic_index + i;
+		view.loadElements();
+	};
 
 	// Locks and Unlocks next/prev buttons
 	view.checkBtn = function(){
@@ -130,6 +185,8 @@ var view = (function(){
 			view.loadMsgEntry();
 			//load Msgs
 			view.loadMessages();
+			//change url
+			view.changeUrl();
 		}else{
 			//Picture
 			document.getElementById("display").innerHTML = "";
@@ -144,20 +201,20 @@ var view = (function(){
 	view.loadPicture = function(){
 		var container = document.getElementById("display");
 		//Picture
-				container.innerHTML = "";
-				var pic = document.createElement('img');
-				var curr_pic = pictures[curr_pic_index];
-				console.log(pictures);
-				pic.className = "photo";
-				pic.id = curr_pic.id;
-				pic.src = curr_pic.link;
-				container.append(pic);
-				//Info
-				var info = document.createElement('div');
-				info.id = "curr_info";
-				info.innerHTML = `
-					<p>${curr_pic.content} by ${curr_pic.author}</p>
-					<p>ID: ${curr_pic.id}</p`;
+		container.innerHTML = "";
+		var pic = document.createElement('img');
+		var curr_pic = pictures[curr_pic_index];
+		console.log(pictures);
+		pic.className = "photo";
+		pic.id = curr_pic.id;
+		pic.src = curr_pic.link;
+		container.append(pic);
+		//Info
+		var info = document.createElement('div');
+		info.id = "curr_info";
+		info.innerHTML = `
+		<p>${curr_pic.content} by ${curr_pic.author}</p>
+		<p>ID: ${curr_pic.id}</p`;
 		container.append(info);
 		//Buttons
 		var btn = document.createElement('div');
@@ -185,8 +242,8 @@ var view = (function(){
 	// Loads Comment Entry Form
 	view.loadMsgEntry = function(){
 		var container = document.getElementById("msg_entry");
-				container.innerHTML = `
-				<form class="comment_form" id="comment">
+		container.innerHTML = `
+		<form class="comment_form" id="comment">
 		<div class="form_title">Write a Comment</div>
 		<input class="form_element" id="msg_name" placeholder="Enter your name"></input>
 		<input class="form_element" id="msg_content" placeholder="Comment"></input>
@@ -202,16 +259,22 @@ var view = (function(){
 		var messages = pictures[curr_pic_index].messages;
 		console.log(messages);
 		var len_msg = messages.length;
-		messages = messages.slice(len_msg - msg_offset, 10);
-		console.log(msg_offset, messages, len_msg);
+		var cutoff = len_msg - msg_offset;
+		// If the last comment on the comment page is deleted, move to previous page
+		if(cutoff <= 0){
+			return view.changeMsg(-10);
+		}
+		messages = messages.slice(0, cutoff).slice(-10);
+		// Create Comments
 		messages.forEach(function (message){
 			// create the message element
-				var e = document.createElement('div');
-				e.className = "message";
-				e.id = message.mid;
-				e.innerHTML = `
-								<div class="author">${message.msgauthor}</div>
-								<div class="content">${message.msgcontent}</div>`;
+			var e = document.createElement('div');
+			e.className = "message";
+			e.id = message.mid;
+			e.innerHTML = `
+			<div class="author">${message.msgauthor}</div>
+			<div class="content">${message.msgcontent}</div>
+			<div class="date">${message.date}</div>`;
 				// add delete button
 				var deleteButton = document.createElement('div');
 				deleteButton.className = "delete-icon icon";
@@ -224,7 +287,7 @@ var view = (function(){
 				e.append(deleteButton); 
 				// add this element to the document
 				container.prepend(e);
-		});
+			});
 		// Set up msg buttons
 		var btn = document.createElement('div');
 		btn.class = "msg_btns";
@@ -232,7 +295,7 @@ var view = (function(){
 		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="Previous">
 		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value="Next">`;
 		container.prepend(btn);
-		//view.checkMsgBtn();
+		view.checkMsgBtn(cutoff);
 	};
 
 	// Refreshed frontend to next/prev picture
@@ -243,18 +306,19 @@ var view = (function(){
 	};
 
 	// Locks and Unlocks msg next/prev buttons
-	view.checkMsgBtn = function(){
-		if(curr_pic_index == pictures.length-1){
-			document.getElementById('msg_next').disabled = true;
-		}
-		if(curr_pic_index === 0){
+	view.checkMsgBtn = function(cutoff){
+		if(msg_offset === 0){
 			document.getElementById('msg_prev').disabled = true;
 		}
-		if(0 < curr_pic_index && curr_pic_index < pictures.length-1){
-			document.getElementById('msg_next').disabled = false;
-			document.getElementById('msg_prev').disabled = false;
+		if(cutoff <= 10){
+			document.getElementById('msg_next').disabled = true;
 		}
 	};
+
+	// Change url
+	view.changeUrl = function(){
+		window.history.replaceState(null, null, "/?id=" + pictures[curr_pic_index].id.toString());
+	}
 
 	return view;
 

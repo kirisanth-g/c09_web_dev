@@ -1,32 +1,51 @@
 /* This snippet of code was modified from Lab2 */
-html {overflow: -moz-scrollbars-vertical;}
+html {overflow: -moz-scrollbars-vertical;
+background: #DFDFDF}
+
+@font-face{
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/roboto/v15/CWB0XYA8bzo0kSThX0UTuA.woff2);
+}
 
 body {
-	background: #FFFFFF;
-	font-family: Arial, Helvetica, sans-serif;
+    font-family: "Roboto";
 	font-size: 14px;
 	color: #3C3D3F;
-    text-align: left;
-    
+    /*text-align: left;*/
 
-    max-width: 800px;   /* set the body to be 800px long */
+    max-width: 75%;   /* set the body to be 800px long */
     margin: auto;       /* center the app in the middle of the browser window */ 
-
-
 }
 
 header{
+    background: #FFFFFF;
     display:flex;
+    flex-direction: row;
     margin-top:25px;
     margin-bottom: 15px;
-    justify-content:flex-end;
+    justify-content: center;
 }
 
 header h1{
-    margin: 0px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     padding-top:4px;
-    width:100%;
-    font-size:30px;
+    font-size:45px;
+    /*align-self: center;*/
+}
+
+header img{
+    align-self: baseline;
+    height: 40px;
+}
+
+.block{
+    background: #FFFFFF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 40px 40px 40px 40px;
 }
 
 .header_button{

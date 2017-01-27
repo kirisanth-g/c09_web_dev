@@ -13,6 +13,10 @@
   display: none;
 }
 
+#upload_file{
+  display: none;
+}
+
 .complex_form .form_title{
     font-size:15px;
     font-weight:bold;
