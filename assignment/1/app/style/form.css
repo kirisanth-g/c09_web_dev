@@ -1,9 +1,9 @@
 /* This snippet of code was modified from Lab2 */
 
 .complex_form{
-    margin-top:15px;
-    border-radius: 10px;
-    border: 2px #3C3D3F solid;
+    /*margin-top:15px;*/
+    /*border-radius: 10px;
+    border: 2px #3C3D3F solid;*/
     padding:20px 10px 10px 10px;
     display:flex;
     flex-direction: column;
@@ -18,20 +18,20 @@
 }
 
 .complex_form .form_title{
-    font-size:15px;
+    font-size:20px;
     font-weight:bold;
     margin:-20px -10px 20px -10px;
     padding:10px 25px 10px 25px;
-    color:white;
-    background-color: #3C3D3F;
-    border-radius: 7px 7px 0px 0px;
+    background-color: #DFDFDF;
+    /*border-radius: 7px 7px 0px 0px;*/
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: baseline;
 }
 
 .complex_form .form_title img{
-  height: 35px;
+  height: 30px;
 }
 .complex_form .form_radio{
     display:flex;
@@ -49,11 +49,11 @@
 /* This snippet of code was generated using: http://css3buttongenerator.com/ */
 
 .complex_form .btn{
-    border-radius:10px;
+    /*border-radius:10px;*/
     text-align:center;
     font-size: 15px;
-    color: #3C3D3F;
-    background: #ffffff;
+    /*color: #3C3D3F;*/
+    background: #DFDFDF;
     border: 2px #3C3D3F solid;
     padding: 10px 20px 10px 20px;
 }

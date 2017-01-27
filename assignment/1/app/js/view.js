@@ -111,14 +111,14 @@ var view = (function(){
 
 	//404
 	view.set404 = function(){
-		var container = document.getElementsByTagName("BODY")[0];
-		var e = document.createElement('div');
-		e.className = "404";
-		e.id = "404";
+		view.clearPage();
+		view.changeUrl(false);
+		// var container = document.getElementsByTagName("BODY")[0];
+		var e = document.getElementById("display");
+		e.style.display = "flex";
 		e.innerHTML = `
 			<h1>404</h1>
 			<h3>Image Not Found</h3>`;
-		container.insertBefore(e, document.getElementsByTagName("FOOTER")[0]);
 	}
 
 	// Relaods all info and refreshed frontend to last picture
@@ -127,9 +127,9 @@ var view = (function(){
 		if(url_id){
 			var id = findIndex(url_id);
 			console.log("found", id);
+			url_id ='';
 			if(id >= 0){
 				curr_pic_index = id;
-				url_id ='';
 			}
 			//404
 			else{
@@ -180,22 +180,29 @@ var view = (function(){
 	view.loadElements = function(){
 		if(pictures.length > 0){
 			//load Picture
+			document.getElementById("display").style.display = "block";
 			view.loadPicture();
 			//load Msg Entry
+			document.getElementById("msg_entry").style.display = "flex";
 			view.loadMsgEntry();
 			//load Msgs
+			document.getElementById("messages").style.display = "flex";
 			view.loadMessages();
 			//change url
-			view.changeUrl();
+			view.changeUrl(true);
 		}else{
-			//Picture
-			document.getElementById("display").innerHTML = "";
-			//Msg Entry
-			document.getElementById("msg_entry").innerHTML = "";
-			//Msgs
-			document.getElementById("messages").innerHTML = "";
+			view.clearPage();
 		}
 	};
+
+	view.clearPage = function (){
+			//Picture
+			document.getElementById("display").style.display = "none";
+			//Msg Entry
+			document.getElementById("msg_entry").style.display = "none";
+			//Msgs
+			document.getElementById("messages").style.display = "none";
+	}
 
 	// Loads Picture and Buttons
 	view.loadPicture = function(){
@@ -213,15 +220,16 @@ var view = (function(){
 		var info = document.createElement('div');
 		info.id = "curr_info";
 		info.innerHTML = `
-		<p>${curr_pic.content} by ${curr_pic.author}</p>
-		<p>ID: ${curr_pic.id}</p`;
+		<h1>${curr_pic.content}</h1>
+		<p>by ${curr_pic.author}</p>`;
 		container.append(info);
 		//Buttons
 		var btn = document.createElement('div');
+		btn.className = "btn_group";
 		btn.innerHTML= `
-		<input type="button" class="pic_button" id="prev" onclick="view.changePic(-1)" value="Previous">
-		<input type="button" class="pic_button" id="del" onclick="view.deletePicture()" value="Delete">
-		<input type="button" class="pic_button" id="next" onclick="view.changePic(1)" value="Next">`;
+		<input type="button" class="pic_button" id="prev" onclick="view.changePic(-1)" value="<">
+		<input type="button" class="pic_button" id="del" onclick="view.deletePicture()" value="x">
+		<input type="button" class="pic_button" id="next" onclick="view.changePic(1)" value=">">`;
 		container.append(btn);
 		view.checkBtn();
 	};
@@ -257,8 +265,11 @@ var view = (function(){
 		container.innerHTML = "";
 		// Get the latest 10 comments
 		var messages = pictures[curr_pic_index].messages;
-		console.log(messages);
 		var len_msg = messages.length;
+		// Remove element if there is no comments
+		if (len_msg ===0){
+			document.getElementById("messages").style.display = "none";
+		}
 		var cutoff = len_msg - msg_offset;
 		// If the last comment on the comment page is deleted, move to previous page
 		if(cutoff <= 0){
@@ -290,10 +301,10 @@ var view = (function(){
 			});
 		// Set up msg buttons
 		var btn = document.createElement('div');
-		btn.class = "msg_btns";
+		btn.className = "btn_group";
 		btn.innerHTML= `
-		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="Previous">
-		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value="Next">`;
+		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="<">
+		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value=">">`;
 		container.prepend(btn);
 		view.checkMsgBtn(cutoff);
 	};
@@ -316,8 +327,12 @@ var view = (function(){
 	};
 
 	// Change url
-	view.changeUrl = function(){
-		window.history.replaceState(null, null, "/?id=" + pictures[curr_pic_index].id.toString());
+	view.changeUrl = function(check){
+		if(check){
+			window.history.replaceState(null, null, "/?id=" + pictures[curr_pic_index].id.toString());
+		}else{
+			window.history.replaceState(null, null, "");
+		}
 	}
 
 	return view;
