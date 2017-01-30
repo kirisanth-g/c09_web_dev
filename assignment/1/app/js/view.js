@@ -1,3 +1,4 @@
+/* jshint esversion: 6*/
 var view = (function(){
 	var view = {};
 	var pictures = [];
@@ -107,7 +108,7 @@ var view = (function(){
 				return i;
 			}
 		}
-	}
+	};
 
 	//404
 	view.set404 = function(){
@@ -119,14 +120,13 @@ var view = (function(){
 		e.innerHTML = `
 			<h1>404</h1>
 			<h3>Image Not Found</h3>`;
-	}
+	};
 
 	// Relaods all info and refreshed frontend to last picture
 	view.insertPictures = function(pics){
 		pictures = pics;
 		if(url_id){
 			var id = findIndex(url_id);
-			console.log("found", id);
 			url_id ='';
 			if(id >= 0){
 				curr_pic_index = id;
@@ -138,7 +138,6 @@ var view = (function(){
 		}else{
 			curr_pic_index = pictures.length-1;
 		}
-		console.log("next", curr_pic_index);
 		msg_offset = 0;
 		view.loadElements();
 	};
@@ -147,7 +146,7 @@ var view = (function(){
 	view.refresh = function(pics){
 		pictures = pics;
 		view.loadElements();
-	}
+	};
 
 	// Refreshed frontend to next/prev picture
 	view.changePic = function(i){
@@ -202,7 +201,7 @@ var view = (function(){
 			document.getElementById("msg_entry").style.display = "none";
 			//Msgs
 			document.getElementById("messages").style.display = "none";
-	}
+	};
 
 	// Loads Picture and Buttons
 	view.loadPicture = function(){
@@ -211,7 +210,6 @@ var view = (function(){
 		container.innerHTML = "";
 		var pic = document.createElement('img');
 		var curr_pic = pictures[curr_pic_index];
-		console.log(pictures);
 		pic.className = "photo";
 		pic.id = curr_pic.id;
 		pic.src = curr_pic.link;
@@ -287,7 +285,7 @@ var view = (function(){
 			<div class="content">${message.msgcontent}</div>`;
 			// Details
 			var d = document.createElement('div');
-			d.className = "details"
+			d.className = "details";
 			d.innerHTML = `<div class="date">${message.date}</div>`;
 			// add delete button
 			var deleteButton = document.createElement('div');
@@ -316,7 +314,6 @@ var view = (function(){
 	// Refreshed frontend to next/prev picture
 	view.changeMsg = function(i){
 		msg_offset = msg_offset + i;
-		console.log(msg_offset);
 		view.loadMessages();
 	};
 
@@ -337,7 +334,7 @@ var view = (function(){
 		}else{
 			window.history.replaceState(null, null, "");
 		}
-	}
+	};
 
 	return view;
 

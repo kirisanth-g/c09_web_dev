@@ -86,12 +86,12 @@ var model = (function(){
     //save pics
     model.savePics = function(){
         model.saveToLocal(new CustomEvent("pictureUpdated", {'detail': pictures }));
-    }
+    };
 
     //save msg
     model.saveMsg = function(){
         model.saveToLocal(new CustomEvent("messageUpdated", {'detail': pictures }));
-    }
+    };
 
     // create msg
     model.uploadMessage = function(data, id){
@@ -99,7 +99,7 @@ var model = (function(){
         var picture = pictures.filter(function(e){
             return (e.id === id);
         });
-        picture = picture[0]
+        picture = picture[0];
         picture.messages.push(new Message(data));
         model.saveMsg();
     };
@@ -111,7 +111,7 @@ var model = (function(){
             return (e.id === data.id);
         });
         console.log(picture, data);
-        picture = picture[0]
+        picture = picture[0];
         picture.messages = picture.messages.filter(function(me){
             return(me.mid !== data.mid);
         });

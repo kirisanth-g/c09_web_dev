@@ -2,12 +2,10 @@
     
     // model events
     document.addEventListener('pictureUpdated', function (e) {
-        console.log("Con", e.detail);
         view.insertPictures(e.detail);
     });
 
     document.addEventListener('messageUpdated', function (e) {
-        console.log("Con", e.detail);
         view.refresh(e.detail);
     });
 
@@ -22,7 +20,7 @@
 
     document.addEventListener('uploadMsg', function (e) {
         var id = e.detail.id;
-        delete e.detail["id"];
+        delete e.detail.id;
         model.uploadMessage(e.detail, id);
     });
 
