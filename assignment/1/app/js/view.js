@@ -254,7 +254,7 @@ var view = (function(){
 		<form class="comment_form" id="comment">
 		<div class="form_title">Write a Comment</div>
 		<input class="form_element" id="msg_name" placeholder="Enter your name"></input>
-		<input class="form_element" id="msg_content" placeholder="Comment"></input>
+		<textarea class="form_element" id="msg_content" placeholder="Comment"></textarea>
 		<input type="button" class="button" onclick="view.enterMsg()" class="btn" value="Comment">
 		</form>`;
 	};
@@ -284,21 +284,25 @@ var view = (function(){
 			e.id = message.mid;
 			e.innerHTML = `
 			<div class="author">${message.msgauthor}</div>
-			<div class="content">${message.msgcontent}</div>
-			<div class="date">${message.date}</div>`;
-				// add delete button
-				var deleteButton = document.createElement('div');
-				deleteButton.className = "delete-icon icon";
-				deleteButton.onclick = function (e){
-					var data = {};
-					data.mid = parseInt(e.target.parentNode.id);
-					data.id = pictures[curr_pic_index].id;
-					document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
-				};
-				e.append(deleteButton); 
-				// add this element to the document
-				container.prepend(e);
-			});
+			<div class="content">${message.msgcontent}</div>`;
+			// Details
+			var d = document.createElement('div');
+			d.className = "details"
+			d.innerHTML = `<div class="date">${message.date}</div>`;
+			// add delete button
+			var deleteButton = document.createElement('div');
+			deleteButton.className = "delete-icon icon";
+			deleteButton.onclick = function (e){
+				var data = {};
+				data.mid = parseInt(e.target.parentNode.parentNode.id);
+				data.id = pictures[curr_pic_index].id;
+				document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
+			};
+			d.append(deleteButton); 
+			e.append(d);
+			// add this element to the document
+			container.prepend(e);
+		});
 		// Set up msg buttons
 		var btn = document.createElement('div');
 		btn.className = "btn_group";

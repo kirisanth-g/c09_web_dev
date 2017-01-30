@@ -5,23 +5,32 @@
 
 .message{
     display: flex;
+    flex-direction: row;
     margin-top:10px;
-    height: 50px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    height: 70px;
     align-items: center;
+    justify-content: space-around;
     border-bottom: 2px solid #DFDFDF;
 }
 
 .author{
     align-items: center;
     font-weight: bold;
+    word-wrap: break-word;
+    max-width: 100px;
 }
 
 .author::after {
-    content: " said: "
+    content: " commented: ";
 }
 
 .content{
     padding-left:20px;
+    max-width: 600px;
+    word-wrap: break-word;
+    flex: 2 0 0;
 }
 
 .icon{
@@ -33,6 +42,15 @@
 
 }
 
+.details{
+    padding-left:20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    max-width: 200px;
+}
+
 .delete-icon{
     background-image: url('../media/delete-icon.png');
+    align-self: flex-end;
 }
