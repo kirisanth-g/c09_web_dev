@@ -1,0 +1,88 @@
+/* This snippet of code was modified from Lab2 */
+
+.complex_form{
+    /*margin-top:15px;*/
+    /*border-radius: 10px;
+    border: 2px #3C3D3F solid;*/
+    padding:20px 10px 10px 10px;
+    display:flex;
+    flex-direction: column;
+}
+
+.comment_form{
+    padding:20px 10px 10px 10px;
+    display:flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.comment_form .form_title{
+  font-size:20px;
+  font-weight:bold;
+  margin:-20px -10px 20px -10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+
+.comment_form .form_element{
+   margin-bottom:10px;
+   font-size: 15px;
+   padding:5px 10px 5px 10px;
+}
+
+#upload{
+  display: none;
+}
+
+#upload_file{
+  display: none;
+}
+
+.complex_form .form_title{
+    font-size:20px;
+    font-weight:bold;
+    margin:-20px -10px 20px -10px;
+    padding:10px 25px 10px 25px;
+    background-color: #DFDFDF;
+    /*border-radius: 7px 7px 0px 0px;*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.complex_form .form_title img{
+  height: 30px;
+}
+.complex_form .form_radio{
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.complex_form .form_element{
+     margin-bottom:10px;
+     font-size: 15px;
+     border-radius:10px;
+     padding:5px 10px 5px 10px;
+}
+
+/* This snippet of code was generated using: http://css3buttongenerator.com/ */
+
+.complex_form .btn{
+    /*border-radius:10px;*/
+    text-align:center;
+    font-size: 15px;
+    /*color: #3C3D3F;*/
+    background: #DFDFDF;
+    border: 2px #3C3D3F solid;
+    padding: 10px 20px 10px 20px;
+}
+
+.complex_form .btn:hover {
+  background: #3C3D3F;
+  color: #ffffff;
+}
