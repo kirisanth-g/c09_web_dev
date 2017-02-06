@@ -3,6 +3,13 @@ var express = require('express')
 var app = express();
 
 var crypto = require('crypto');
+var session = require('express-session');
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+}));
+
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
