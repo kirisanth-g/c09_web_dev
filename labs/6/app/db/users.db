@@ -1,3 +1,3 @@
-{"$$indexCreated":{"fieldName":"username","unique":true,"sparse":false}}
-{"username":"beta","hash":"48cd77883c4559c36f3384d2d96be8770499eb5592ab7f16d327f85a984f402d97e187d65f59441fc1fce381c6aea8047b3de17a60ff6bb922d748f22870f4cc","salt":"a71784e2c927cd3c0569ef344b68e69b","picture":null,"_id":"dTG7uj4VoPWefJj2"}
 {"username":"fdl","hash":"811529683dd98fd5e201011d7bcbbae2a5e7c6b49f0eb4870e6255a0dc6f18d9e7d30ae83844f78c649c9fc19d5eaf0897ef446be2e983a7f30e8909ae4a999f","salt":"015ad8ec18911ca4dd07e87097015650","picture":null,"_id":"YykmeqwhYlrwyF8Q"}
+{"username":"beta","hash":"48cd77883c4559c36f3384d2d96be8770499eb5592ab7f16d327f85a984f402d97e187d65f59441fc1fce381c6aea8047b3de17a60ff6bb922d748f22870f4cc","salt":"a71784e2c927cd3c0569ef344b68e69b","picture":null,"_id":"dTG7uj4VoPWefJj2"}
+{"$$indexCreated":{"fieldName":"username","unique":true,"sparse":false}}

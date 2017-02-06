@@ -46,10 +46,17 @@ app.delete('/signout/', function (req, res, next) {
 app.post('/signin/', function (req, res, next) {
     users.findOne({username: req.body.username}, function(err, user){
         if (err) res.status(500).end("Database error");
-        if (!user) res.status(401).end("Wrong username or password");
+        if (!user || !checkPassword(user, req.body.password)) res.status(401).end("Wrong username or password");
         else res.json(user);
     });
 });
+
+var checkPassword = function(user, password){
+        var hash = crypto.createHmac('sha512', user.salt);
+        hash.update(password);
+        var value = hash.digest('hex');
+        return (user.hash === value);
+};
 
 // Create
 
