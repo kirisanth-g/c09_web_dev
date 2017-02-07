@@ -29,14 +29,9 @@ app.listen(3000, function () {
 
 // Objects
 var Comment = (function (){
-    var cid = 0;
+    var id = 0;
     return function Comment(comment){
-        if (comment.cid){
-            this.id = comment.cid;
-            cid = (comment.cid >= cid)? comment.cid+1 : cid;
-        }else{
-            this.cid = cid++;
-        }
+        this.id = cid++;
         this.pid = comment.pid;
         this.content = comment.content;
         this.author = comment.author;
@@ -47,17 +42,12 @@ var Comment = (function (){
 var Picture = (function (){
     var id = 0;
     return function Picture(picture){
-        if (picture.id){
-            this.id = picture.id;
-            id = (picture.id>=id)? picture.id+1 : id;
-        }else{
-            this.id = id++;
-        }
+        this.id = id++;
         this.content = picture.content;
         this.author = picture.author;
         this.link = picture.link;
     };
-}());
+})();
 
 // Paths
 
