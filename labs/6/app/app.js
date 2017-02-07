@@ -44,6 +44,14 @@ var User = function(user){
     this.picture = null;
 };
 
+function checkAuthentication(req,res,next) {
+  if ( !req.isAuthenticated() ) {
+     res.status(403);
+     return res.end("Forbidden");
+  }
+  next();
+}
+
 // signin, signout
 
 app.delete('/signout/', function (req, res, next) {

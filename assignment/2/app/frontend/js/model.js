@@ -1,7 +1,7 @@
 // Some code has been modified from Lab5
 var model = (function(){
     "use strict";
-    
+
     var model = {};
 
     var pictures = [];
@@ -46,7 +46,7 @@ var model = (function(){
     }());
 
     // init
-    
+
     model.init = function (){
         // fetch data from the local store
         var data = localStorage.getItem("pictures");
@@ -61,10 +61,8 @@ var model = (function(){
 
     // create
     model.uploadPicture = function (data){
-        // create the message
-        var picture = new Picture(data);
-        pictures.push(picture);
-        model.savePics();
+        // Upload the Picture
+        doAjax('POST', '/api/picture/', data, false, model.savePics());
     };
 
     // delete
@@ -116,7 +114,31 @@ var model = (function(){
         });
         model.saveMsg();
     };
-    
+
+    // Ajax from Lab 6
+    var doAjax = function (method, url, body, json, callback){
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(e){
+            switch(this.readyState){
+                 case (XMLHttpRequest.DONE):
+                    if (this.status === 200) {
+                        if(json) return callback(null, JSON.parse(this.responseText));
+                        return callback(this.responseText, null);
+                    }else{
+                        return callback(this.responseText, null);
+                    }
+            }
+        };
+        xhttp.open(method, url, true);
+        if (json && body){
+            xhttp.setRequestHeader('Content-Type', 'application/json');
+            xhttp.send(JSON.stringify(body));
+        }else{
+            xhttp.send(body);
+        }
+    };
+
+
     return model;
 
 }());

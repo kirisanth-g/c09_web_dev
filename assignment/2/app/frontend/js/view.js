@@ -15,7 +15,7 @@ var view = (function(){
 
 
 	// Taken form Techincal Overload
-	function getParameter(theParameter) { 
+	function getParameter(theParameter) {
 		var params = window.location.search.substr(1).split('&');
 		for (var i = 0; i < params.length; i++) {
 			var p=params[i].split('=');
@@ -67,11 +67,11 @@ var view = (function(){
 		data.author = document.getElementById('upload_form_name').value;
 		data.content = document.getElementById('upload_photo_name').value;
 		var type = document.querySelector('input[name="type"]:checked').value;
-		
+
 		if (type==="URL"){
 			// Grab the external URL
 			data.link = document.getElementById("upload_url").value;
-			// Clean & Close Form 
+			// Clean & Close Form
 			document.getElementById("upload").reset();
 			view.closeUpload();
 			// Send out Event
@@ -81,22 +81,17 @@ var view = (function(){
 			file = document.querySelector('input[type=file]').files[0];
 			// Check if values are entered
 			// --Modified from Lab5
-			if (data.username.length>0 && data.content.length>0){
-				// Clean & Close Form 
+			// if (data.username.length>0 && data.content.length>0){
+			if (true){
+				// Clean & Close Form
 				document.getElementById("upload").reset();
 				view.closeUpload();
 
-				// Read Uploaded File into Memory
-				var reader = new FileReader();
-				// --Modified from Mozilla Developer Site
-				reader.addEventListener("load", function(){
-					data.link = reader.result;
-					document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': data }));
-				});
-
-				if(file){
-					reader.readAsDataURL(file);
-				}
+				// Formdata
+				var formdata = new FormData();
+        formdata.append("picture", file);
+        formdata.append("data", JSON.stringify(data));
+				document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': formdata }));
 			}
 		}
 	};
@@ -134,7 +129,7 @@ var view = (function(){
 			//404
 			else{
 				return view.set404();
-			}		
+			}
 		}else{
 			curr_pic_index = pictures.length-1;
 		}
@@ -239,7 +234,7 @@ var view = (function(){
 		data.id = pictures[curr_pic_index].id;
 		data.msgauthor = document.getElementById('msg_name').value;
 		data.msgcontent = document.getElementById('msg_content').value;
-		// Clean Form 
+		// Clean Form
 		document.getElementById("comment").reset();
 		// Send Event
 		document.dispatchEvent(new CustomEvent("uploadMsg", {'detail': data}));
@@ -296,7 +291,7 @@ var view = (function(){
 				data.id = pictures[curr_pic_index].id;
 				document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
 			};
-			d.append(deleteButton); 
+			d.append(deleteButton);
 			e.append(d);
 			// add this element to the document
 			container.prepend(e);

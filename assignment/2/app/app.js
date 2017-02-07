@@ -4,8 +4,16 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-var nedb = require('nedb'),
-  db = new nedb({ filename: 'db/data.db', autoload: true });
+
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
+
+// Setup NEDB
+var Datastore = require('nedb');
+var comments = new Datastore({ filename: 'db/comments.db', autoload: true, timestampData : true});
+var pictures = new Datastore({ filename: 'db/pictures.db', autoload: true });
+pictures.ensureIndex({fieldName: 'id', unique:true});
+
 
 app.use(express.static('frontend'));
 
@@ -16,15 +24,67 @@ app.use(express.static('frontend'));
 // });
 
 app.listen(3000, function () {
-  console.log('App listening on port 3000')
+  console.log('App listening on port 3000');
 });
 
+// Objects
+var Comment = (function (){
+    var cid = 0;
+    return function Comment(comment){
+        if (comment.cid){
+            this.id = comment.cid;
+            cid = (comment.cid >= cid)? comment.cid+1 : cid;
+        }else{
+            this.cid = cid++;
+        }
+        this.pid = comment.pid;
+        this.content = comment.content;
+        this.author = comment.author;
+        this.date = new Date();
+    };
+}());
+
+var Picture = (function (){
+    var id = 0;
+    return function Picture(picture){
+        if (picture.id){
+            this.id = picture.id;
+            id = (picture.id>=id)? picture.id+1 : id;
+        }else{
+            this.id = id++;
+        }
+        this.content = picture.content;
+        this.author = picture.author;
+        this.link = picture.link;
+    };
+}());
+
 // Paths
-app.get('/api/picture/', function (req, res, next) {
-  var id = req.query.id;
-  if(id){
+
+// Create
+app.post('/api/picture/', upload.single('picture'), function (req, res, next) {
+  var info = JSON.parse(req.body.data);
+  info['link'] = req.file.path;
+  var data = new Picture(info);
+  console.log(data);
+  pictures.insert(data, function (err, pic) {
+        if (err) {
+            console.log(err);
+            res.status(409).end("Picture failed to upload.");
+            return next();
+        }
+        res.json(pic);
+        // res.redirect('/');
+        return next();
+    });
+});
+
+// Reads
+app.get('/api/picture/:id/', function (req, res, next) {
+  var id = req.params.id;
+  if (id) {
     res.json(id);
-  }else{
+  } else {
     res.json("hello");
   }
   // Reutrn pics
