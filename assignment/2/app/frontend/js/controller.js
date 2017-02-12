@@ -2,7 +2,8 @@
 
     // model events
     document.addEventListener('pictureUpdated', function (e) {
-        view.insertPictures(e.detail);
+      console.log(e);
+        view.loadElements(e.detail);
     });
 
     document.addEventListener('messageUpdated', function (e) {
@@ -13,6 +14,11 @@
     document.addEventListener('uploadSubmitted', function (e) {
         console.log(e);
         model.uploadPicture(e.detail);
+    });
+
+    document.addEventListener('urlLoadSubmitted', function (e) {
+        console.log(e);
+        model.urlLoadPicture(e.detail);
     });
 
     document.addEventListener('delPicture', function (e) {

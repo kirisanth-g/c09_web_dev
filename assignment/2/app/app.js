@@ -85,9 +85,7 @@ var PCR = function(id){
 // Paths
 
 // Create
-app.post('/api/picture/', upload.single('picture'), function (req, res, next) {
-  var info = JSON.parse(req.body.data);
-  info['link'] = req.file.path;
+addPicture = function (info, res, next){
   getID("pid", function(id){
     info['id'] = id;
     var data =  new Picture(info);
@@ -109,19 +107,37 @@ app.post('/api/picture/', upload.single('picture'), function (req, res, next) {
       });
     });
   });
+};
+
+app.post('/api/picture/url/',function (req, res, next) {
+  var info = req.body;
+  //Add Picture to DB
+  addPicture(info, res, next);
 });
+
+
+app.post('/api/picture/local/', upload.single('picture'), function (req, res, next) {
+  var info = JSON.parse(req.body.data);
+  info['link'] = req.file.path;
+  console.log("here");
+  //Add Picture to DB
+  addPicture(info, res, next);
+});
+
+app.get('/api/picture/local/grab/', function (req, res, next) {
+    console.log(req.params);
+    if (req.body.id){
+        res.setHeader('Content-Type', req.body.mimetype);
+        res.sendFile(path.join(__dirname, req.body.link));
+    }
+    else res.status(404).end("Profile not set");
+    next();
+});
+
 
 // Reads
 app.get('/api/picture/:id/', function (req, res, next) {
   var id = req.params.id;
-
-  var x = getNewID("pid", function(id){
-    console.log("pid", id);
-  });
-
-  var x = getNewID("cid", function(id){
-    console.log("cid", id);
-  });
 
   if (id) {
     res.json(id);

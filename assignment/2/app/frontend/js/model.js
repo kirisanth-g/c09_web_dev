@@ -62,7 +62,13 @@ var model = (function(){
     // create
     model.uploadPicture = function (data){
         // Upload the Picture
-        doAjax('POST', '/api/picture/', data, false, model.savePics());
+        doAjax('POST', '/api/picture/local/', data, false, model.loadPicture);
+    };
+
+    model.urlLoadPicture = function (data){
+      console.log(data);
+        // Upload the Picture
+        doAjax('POST', '/api/picture/url/', data, true, model.loadPicture);
     };
 
     // delete
@@ -75,15 +81,17 @@ var model = (function(){
     };
 
     // save
-    model.saveToLocal = function(event){
-        // update the local storage and dispatch "messageUpdated"
-        localStorage.setItem("pictures", JSON.stringify(pictures));
-        document.dispatchEvent(event);
-    };
+    // model.saveToLocal = function(event){
+    //     // update the local storage and dispatch "messageUpdated"
+    //     localStorage.setItem("pictures", JSON.stringify(pictures));
+    //     document.dispatchEvent(event);
+    // };
 
     //save pics
-    model.savePics = function(){
-        model.saveToLocal(new CustomEvent("pictureUpdated", {'detail': pictures }));
+    model.loadPicture = function(err, picture){
+      console.log(err, picture);
+      if (err) return showError(err);
+      document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': picture }));
     };
 
     //save msg
@@ -115,15 +123,26 @@ var model = (function(){
         model.saveMsg();
     };
 
+    // Grab Local file
+    model.grabLocal = function(pic){
+      console.log(pic);
+      doAjax('GET', '/api/picture/local/grab/', pic, true, function(err, info){
+        console.log(info);
+        pic.link = info;
+        return pic;
+      });
+    }
+
     // Ajax from Lab 6
     var doAjax = function (method, url, body, json, callback){
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(e){
             switch(this.readyState){
                  case (XMLHttpRequest.DONE):
+                  console.log(this.status, this.responseText);
                     if (this.status === 200) {
                         if(json) return callback(null, JSON.parse(this.responseText));
-                        return callback(this.responseText, null);
+                        model.grabLocal(JSON.parse(this.responseText));
                     }else{
                         return callback(this.responseText, null);
                     }

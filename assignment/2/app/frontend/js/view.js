@@ -74,8 +74,10 @@ var view = (function(){
 			// Clean & Close Form
 			document.getElementById("upload").reset();
 			view.closeUpload();
-			// Send out Event
-			document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': data }));
+			// Send out Data and Event
+			var formdata = new FormData();
+			formdata.append("data", JSON.stringify(data));
+			document.dispatchEvent(new CustomEvent("urlLoadSubmitted", {'detail': data }));
 		}else{
 
 			file = document.querySelector('input[type=file]').files[0];
@@ -87,7 +89,7 @@ var view = (function(){
 				document.getElementById("upload").reset();
 				view.closeUpload();
 
-				// Formdata
+				// Send out data and event
 				var formdata = new FormData();
         formdata.append("picture", file);
         formdata.append("data", JSON.stringify(data));
@@ -171,19 +173,19 @@ var view = (function(){
 	};
 
 	// Loads frontend elements
-	view.loadElements = function(){
-		if(pictures.length > 0){
+	view.loadElements = function(pic){
+		if(pic){
 			//load Picture
 			document.getElementById("display").style.display = "block";
-			view.loadPicture();
+			view.loadPicture(pic);
 			//load Msg Entry
 			document.getElementById("msg_entry").style.display = "flex";
 			view.loadMsgEntry();
-			//load Msgs
-			document.getElementById("messages").style.display = "flex";
-			view.loadMessages();
-			//change url
-			view.changeUrl(true);
+			// //load Msgs
+			// document.getElementById("messages").style.display = "flex";
+			// view.loadMessages();
+			// //change url
+			// view.changeUrl(true);
 		}else{
 			view.clearPage();
 		}
@@ -199,12 +201,11 @@ var view = (function(){
 	};
 
 	// Loads Picture and Buttons
-	view.loadPicture = function(){
+	view.loadPicture = function(curr_pic){
 		var container = document.getElementById("display");
 		//Picture
 		container.innerHTML = "";
 		var pic = document.createElement('img');
-		var curr_pic = pictures[curr_pic_index];
 		pic.className = "photo";
 		pic.id = curr_pic.id;
 		pic.src = curr_pic.link;
