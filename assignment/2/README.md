@@ -61,7 +61,7 @@ $ curl -X POST
 - request: `GET api/picture/:id/`   
 - response: 200
     - content-type: `application/json`
-    - body: list of objects
+    - body: object
       - id: (string) the picture id
       - content: (string) the title of the picture
       - author: (string) the authors username
@@ -77,7 +77,7 @@ $ curl http://localhsot:3000/api/picture/0/
 - request: `GET api/picture/next/:id/`   
 - response: 200
     - content-type: `application/json`
-    - body: list of objects
+    - body: object
       - id: (string) the picture id
       - content: (string) the title of the picture
       - author: (string) the authors username
@@ -94,7 +94,7 @@ $ curl http://localhsot:3000/api/picture/next/1/
 - request: `GET api/picture/prev/:id/`   
 - response: 200
     - content-type: `application/json`
-    - body: list of objects
+    - body: object
       - id: (string) the picture id
       - content: (string) the title of the picture
       - author: (string) the authors username
@@ -111,8 +111,7 @@ $ curl http://localhsot:3000/api/picture/prev/1/
 - request: `DELETE /api/picture/:id/`
 - response: 200
     - content-type: `application/json`
-    - body: object
-        - None
+    - body: None
 - response: 404
     - body: picture :id does not exists
 
@@ -136,98 +135,48 @@ $ curl -X DELETE
     - content-type: `application/json`
     - body: object
       - \_id: (string) the message id
+      - pid: (int) the id of associated picture
       - content: (string) the content of the message
       - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
+      - createdAt (Date) time of creation
+      - updatedAt (Date) time of last modification
 
 ```
 $ curl -X POST
        -H "Content-Type: `application/json`"
-       -d '{"content":"hello world","author":"me"}
-       http://localhsot:3000/api/messages/'
+       -d '{"content":"hello world","author":"me", "pid":0}
+       http://localhsot:3000/api/comment/'
 ```
 
 ### Read
 
-- description: retrieve the last 10 messages
-- request: `GET /api/messages/[?limit=10]`   
+- description: retrieve the last 10 messages based on offset set (ex. msg=[1-20], offset=2, res = [9-18])
+- request: `GET /api/comments/:id/:offset`   
 - response: 200
     - content-type: `application/json`
     - body: list of objects
-      - _id: (string) the message id
+      - \_id: (string) the message id
+      - pid: (int) the id of associated picture
       - content: (string) the content of the message
       - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
+      - createdAt (Date) time of creation
+      - updatedAt (Date) time of last modification
 
 ```
-$ curl http://localhsot:3000/api/messages/
+$ curl http://localhsot:3000/api/comments/0/10/
 ```
-
-###  Update
-
-- description: retrieve the message id
-- request: `GET /api/messages/:id/`
-- response: 200
-    - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
-- response: 404
-    - body: message id does not exists
-
-```
-$ curl http://localhsot:3000/api/messages/jed5672jd90xg4awo789/
-```
-
-### Update
-
-- description: upvote or downvote the message id
-- request: `PATCH /api/messages/:id/`
-    - content-type: `application/json`
-    - body: object
-      - action: (string) either `upvote` or `downvote`
-- response: 200
-    - content-type: `application/json`
-    - body: object
-      - _id: (string) the message id
-      - content: (string) the content of the message
-      - author: (string) the authors username
-      - upvote: (int) the number of upvotes
-      - downvote: (int) the number of downvotes
-- response: 204
-    - body: invalid argument
-- response: 404
-    - body: message :id does not exists
-
-```
-$ curl -X PATCH
-       -H 'Content-Type: application/json'
-       -d '{"action":"upvote"}
-       http://localhsot:3000/api/messages/jed5672jd90xg4awo789/'
-```
-
 
 ### Delete
 
-- description: delete the message id
-- request: `DELETE /api/messages/:id/`
+- description: delete the message at mid that is a comment of pid
+- request: `DELETE /api/comment/:pid/:mid`
 - response: 200
     - content-type: `application/json`
-    - body: object
-        - _id: (string) the message id
-        - content: (string) the content of the message
-        - author: (string) the authors username
-        - upvote: (int) the number of upvotes
-        - downvote: (int) the number of downvotes
+    - body: None
 - response: 404
     - body: message :id does not exists
 
 ```
 $ curl -X DELETE
-       http://localhsot:3000/api/messages/jed5672jd90xg4awo789/
+       http://localhsot:3000/api/comment/0/jed5672jd90xg4awo789/
 ```
