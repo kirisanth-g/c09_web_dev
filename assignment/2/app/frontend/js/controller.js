@@ -3,11 +3,17 @@
     // model events
     document.addEventListener('pictureUpdated', function (e) {
       console.log(e);
-        view.loadElements(e.detail);
+      view.loader(e.detail);
     });
 
-    document.addEventListener('messageUpdated', function (e) {
-        view.refresh(e.detail);
+    document.addEventListener('commentUpdated', function (e) {
+      console.log("reloading comments");
+      view.getComments();
+    });
+
+    document.addEventListener('CommentsLoaded', function (e) {
+      console.log("done loading comments");
+        view.loadMessages(e.detail);
     });
 
     // views events
@@ -17,7 +23,6 @@
     });
 
     document.addEventListener('urlLoadSubmitted', function (e) {
-        console.log(e);
         model.urlLoadPicture(e.detail);
     });
 
@@ -26,9 +31,7 @@
     });
 
     document.addEventListener('uploadMsg', function (e) {
-        var id = e.detail.id;
-        delete e.detail.id;
-        model.uploadMessage(e.detail, id);
+      model.uploadMessage(e.detail);
     });
 
     document.addEventListener('deleteMsg', function (e){
@@ -37,7 +40,15 @@
 
     //Taken from Lab5
     document.addEventListener('documentLoaded', function (e) {
-        model.init();
+      model.init(e.detail);
+    });
+
+    document.addEventListener('loadComs', function (e) {
+      model.loadComments(e.detail);
+    });
+
+    document.addEventListener('changePicture', function (e) {
+      model.changePic(e.detail);
     });
 
 }(model, view));

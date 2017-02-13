@@ -6,57 +6,13 @@ var model = (function(){
 
     var pictures = [];
 
-    // Message constructor
-    var Message = (function (){
-        var mid = 0;
-        return function Message(message){
-            if (message.mid){
-                this.mid = message.mid;
-                mid = (message.mid>=mid)? message.mid+1 : mid;
-            }else{
-                this.mid = mid++;
-            }
-            this.msgcontent = message.msgcontent;
-            this.msgauthor = message.msgauthor;
-            this.date = new Date();
-        };
-    }());
-
-    // Picture constructor
-    var Picture = (function (){
-        var id = 0;
-        return function Picture(picture){
-            if (picture.id){
-                this.id = picture.id;
-                id = (picture.id>=id)? picture.id+1 : id;
-            }else{
-                this.id = id++;
-            }
-            this.content = picture.content;
-            this.author = picture.author;
-            this.link = picture.link;
-            if(picture.messages){
-                this.messages = picture.messages.map(function(msg){
-                    return new Message(msg);
-                });
-            }else{
-                this.messages = new Array();
-            }
-        };
-    }());
-
     // init
-
-    model.init = function (){
-        // fetch data from the local store
-        var data = localStorage.getItem("pictures");
-        if (data){
-            pictures = JSON.parse(data).map(function(pic){
-                return new Picture(pic);
-            });
-        }
-        // dispatch "messageUpdated"
-        document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': pictures }));
+    model.init = function (data){
+      console.log(data);
+      // fetch inital picture
+      doAjax('GET', '/api/picture/' + data.url_id +'/', data, true, model.loadPicture);
+      // dispatch "messageUpdated"
+      //document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': pictures }));
     };
 
     // create
@@ -73,54 +29,50 @@ var model = (function(){
 
     // delete
     model.deletePicture = function (data){
-        // select and delete message
-        pictures = pictures.filter(function(e){
-            return (e.id !== data.id);
-        });
-        model.savePics();
+        doAjax('DELETE', '/api/picture/' + data.id +'/', data, true, model.init);
     };
 
-    // save
-    // model.saveToLocal = function(event){
-    //     // update the local storage and dispatch "messageUpdated"
-    //     localStorage.setItem("pictures", JSON.stringify(pictures));
-    //     document.dispatchEvent(event);
-    // };
+    //Change picture
+    model.changePic = function (data){
+      if(data.i >= 0){
+        doAjax('GET', '/api/picture/next/' + data.id +'/', data, true, model.loadPicture);
+      }else{
+        doAjax('GET', '/api/picture/prev/' + data.id +'/', data, true, model.loadPicture);
+      }
+    };
+
 
     //save pics
     model.loadPicture = function(err, picture){
-      console.log(err, picture);
-      if (err) return showError(err);
+      // if (err) return showError(err);
+      if (err) return ;
       document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': picture }));
     };
 
-    //save msg
-    model.saveMsg = function(){
-        model.saveToLocal(new CustomEvent("messageUpdated", {'detail': pictures }));
+    model.loadedComments = function(err, comments){
+      // if (err) return showError(err);
+      if (err) return ;
+      document.dispatchEvent(new CustomEvent("CommentsLoaded", {'detail': comments}));
     };
 
+    model.reloadComments = function(){
+      document.dispatchEvent(new CustomEvent("commentUpdated"));
+    }
+
     // create msg
-    model.uploadMessage = function(data, id){
-        // select and delete message
-        var picture = pictures.filter(function(e){
-            return (e.id === id);
-        });
-        picture = picture[0];
-        picture.messages.push(new Message(data));
-        model.saveMsg();
+    model.uploadMessage = function(data){
+      // Upload the Comment
+      doAjax('POST', '/api/comment/', data, true, model.reloadComments);
     };
+
+    model.loadComments = function(data){
+      //Get comments
+      doAjax('GET', '/api/comments/' + data.id + '/' + data.offset + '/', data, true, model.loadedComments);
+    }
 
     // create msg
     model.deleteMessage = function(data){
-        // select and delete message
-        var picture = pictures.filter(function(e){
-            return (e.id === data.id);
-        });
-        picture = picture[0];
-        picture.messages = picture.messages.filter(function(me){
-            return(me.mid !== data.mid);
-        });
-        model.saveMsg();
+        doAjax('DELETE', '/api/comment/'+ data.pid + '/' + data.mid + '/', data, true, model.reloadComments);
     };
 
     // Grab Local file
@@ -151,6 +103,7 @@ var model = (function(){
         xhttp.open(method, url, true);
         if (json && body){
             xhttp.setRequestHeader('Content-Type', 'application/json');
+            console.log("HERE", body);
             xhttp.send(JSON.stringify(body));
         }else{
             xhttp.send(body);

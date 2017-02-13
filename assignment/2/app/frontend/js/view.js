@@ -3,14 +3,31 @@ var view = (function(){
 	var view = {};
 	var pictures = [];
 	var curr_pic_index;
-	var msg_offset;
+	var msg_offset = 0;
 	var url_id;
+
+	var curr_pic;
 
 
 	// --Taken form Lab5
 	window.onload = function scheduler(e){
-		url_id = getParameter('id');
-		document.dispatchEvent(new Event("documentLoaded"));
+		var data = [];
+		data.url_id = getParameter('id');
+		// if(url_id){
+		// 	var id = findIndex(url_id);
+		// 	url_id ='';
+		// 	if(id >= 0){
+		// 		curr_pic_index = id;
+		// 	}
+		// 	//404
+		// 	else{
+		// 		return view.set404();
+		// 	}
+		// }else{
+		// 	curr_pic_index = pictures.length-1;
+		// }
+		// view.loadElements();
+		document.dispatchEvent(new CustomEvent("documentLoaded", {'detail': data }));
 	};
 
 
@@ -120,21 +137,8 @@ var view = (function(){
 	};
 
 	// Relaods all info and refreshed frontend to last picture
-	view.insertPictures = function(pics){
-		pictures = pics;
-		if(url_id){
-			var id = findIndex(url_id);
-			url_id ='';
-			if(id >= 0){
-				curr_pic_index = id;
-			}
-			//404
-			else{
-				return view.set404();
-			}
-		}else{
-			curr_pic_index = pictures.length-1;
-		}
+	view.loader = function(pic){
+		curr_pic = pic;
 		msg_offset = 0;
 		view.loadElements();
 	};
@@ -147,8 +151,10 @@ var view = (function(){
 
 	// Refreshed frontend to next/prev picture
 	view.changePic = function(i){
-		curr_pic_index = curr_pic_index + i;
-		view.loadElements();
+		var data = []
+		data.i = i;
+		data.id = curr_pic.id;
+		document.dispatchEvent(new CustomEvent("changePicture", {'detail': data }))
 	};
 
 	// Locks and Unlocks next/prev buttons
@@ -168,24 +174,23 @@ var view = (function(){
 	// Handles Delete Button
 	view.deletePicture = function(){
 		var data = {};
-		data.id = pictures[curr_pic_index].id;
+		data.id = curr_pic.id;
 		document.dispatchEvent(new CustomEvent("delPicture", {'detail': data }));
 	};
 
 	// Loads frontend elements
-	view.loadElements = function(pic){
-		if(pic){
+	view.loadElements = function(){
+		if(curr_pic){
 			//load Picture
 			document.getElementById("display").style.display = "block";
-			view.loadPicture(pic);
+			view.loadPicture();
+			//change url
+			view.changeUrl(true);
 			//load Msg Entry
 			document.getElementById("msg_entry").style.display = "flex";
 			view.loadMsgEntry();
-			// //load Msgs
-			// document.getElementById("messages").style.display = "flex";
-			// view.loadMessages();
-			// //change url
-			// view.changeUrl(true);
+			//load Msgs
+			view.getComments();
 		}else{
 			view.clearPage();
 		}
@@ -201,7 +206,7 @@ var view = (function(){
 	};
 
 	// Loads Picture and Buttons
-	view.loadPicture = function(curr_pic){
+	view.loadPicture = function(){
 		var container = document.getElementById("display");
 		//Picture
 		container.innerHTML = "";
@@ -232,14 +237,22 @@ var view = (function(){
 	view.enterMsg = function(){
 		// Grab Form Elements
 		var data = {};
-		data.id = pictures[curr_pic_index].id;
-		data.msgauthor = document.getElementById('msg_name').value;
-		data.msgcontent = document.getElementById('msg_content').value;
+		data.id = curr_pic.id;
+		data.author = document.getElementById('msg_name').value;
+		data.content = document.getElementById('msg_content').value;
 		// Clean Form
 		document.getElementById("comment").reset();
 		// Send Event
 		document.dispatchEvent(new CustomEvent("uploadMsg", {'detail': data}));
 	};
+
+	view.getComments = function(){
+		document.getElementById("messages").style.display = "flex";
+		var data = [];
+		data.id = curr_pic.id;
+		data.offset = msg_offset;
+		document.dispatchEvent(new CustomEvent("loadComs", {'detail': data}));
+	}
 
 	// Loads Comment Entry Form
 	view.loadMsgEntry = function(){
@@ -254,42 +267,30 @@ var view = (function(){
 	};
 
 	// Loads Comments
-	view.loadMessages = function(){
+	view.loadMessages = function(messages){
 		var container = document.getElementById("messages");
 		container.innerHTML = "";
-		// Get the latest 10 comments
-		var messages = pictures[curr_pic_index].messages;
-		var len_msg = messages.length;
-		// Remove element if there is no comments
-		if (len_msg ===0){
-			document.getElementById("messages").style.display = "none";
-		}
-		var cutoff = len_msg - msg_offset;
-		// If the last comment on the comment page is deleted, move to previous page
-		if(cutoff <= 0){
-			return view.changeMsg(-10);
-		}
-		messages = messages.slice(0, cutoff).slice(-10);
 		// Create Comments
 		messages.forEach(function (message){
 			// create the message element
 			var e = document.createElement('div');
 			e.className = "message";
-			e.id = message.mid;
+			e.id = message._id;
 			e.innerHTML = `
-			<div class="author">${message.msgauthor}</div>
-			<div class="content">${message.msgcontent}</div>`;
+			<div class="author">${message.author}</div>
+			<div class="content">${message.content}</div>`;
 			// Details
 			var d = document.createElement('div');
 			d.className = "details";
-			d.innerHTML = `<div class="date">${message.date}</div>`;
+			var date = new Date(message.createdAt)
+			d.innerHTML = `<div class="date">${date}</div>`;
 			// add delete button
 			var deleteButton = document.createElement('div');
 			deleteButton.className = "delete-icon icon";
 			deleteButton.onclick = function (e){
 				var data = {};
-				data.mid = parseInt(e.target.parentNode.parentNode.id);
-				data.id = pictures[curr_pic_index].id;
+				data.mid = e.target.parentNode.parentNode.id;
+				data.pid = curr_pic.id;
 				document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
 			};
 			d.append(deleteButton);
@@ -304,13 +305,14 @@ var view = (function(){
 		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="<">
 		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value=">">`;
 		container.prepend(btn);
-		view.checkMsgBtn(cutoff);
+		//view.checkMsgBtn(cutoff);
 	};
 
 	// Refreshed frontend to next/prev picture
 	view.changeMsg = function(i){
 		msg_offset = msg_offset + i;
-		view.loadMessages();
+		if(msg_offset < 0) msg_offset = 0;
+		view.getComments();
 	};
 
 	// Locks and Unlocks msg next/prev buttons
@@ -326,7 +328,7 @@ var view = (function(){
 	// Change url
 	view.changeUrl = function(check){
 		if(check){
-			window.history.replaceState(null, null, "/?id=" + pictures[curr_pic_index].id.toString());
+			window.history.replaceState(null, null, "/?id=" + curr_pic.id.toString());
 		}else{
 			window.history.replaceState(null, null, "");
 		}
