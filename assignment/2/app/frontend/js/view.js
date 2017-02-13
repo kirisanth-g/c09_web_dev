@@ -107,10 +107,10 @@ var view = (function(){
 				view.closeUpload();
 
 				// Send out data and event
-				var formdata = new FormData();
-        formdata.append("picture", file);
-        formdata.append("data", JSON.stringify(data));
-				document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': formdata }));
+				var formd = new FormData();
+        formd.append("picture", file);
+        formd.append("data", JSON.stringify(data));
+				document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': formd }));
 			}
 		}
 	};
@@ -151,10 +151,10 @@ var view = (function(){
 
 	// Refreshed frontend to next/prev picture
 	view.changePic = function(i){
-		var data = []
+		var data = [];
 		data.i = i;
 		data.id = curr_pic.id;
-		document.dispatchEvent(new CustomEvent("changePicture", {'detail': data }))
+		document.dispatchEvent(new CustomEvent("changePicture", {'detail': data }));
 	};
 
 	// Locks and Unlocks next/prev buttons
@@ -252,7 +252,7 @@ var view = (function(){
 		data.id = curr_pic.id;
 		data.offset = msg_offset;
 		document.dispatchEvent(new CustomEvent("loadComs", {'detail': data}));
-	}
+	};
 
 	// Loads Comment Entry Form
 	view.loadMsgEntry = function(){
@@ -282,7 +282,7 @@ var view = (function(){
 			// Details
 			var d = document.createElement('div');
 			d.className = "details";
-			var date = new Date(message.createdAt)
+			var date = new Date(message.createdAt);
 			d.innerHTML = `<div class="date">${date}</div>`;
 			// add delete button
 			var deleteButton = document.createElement('div');

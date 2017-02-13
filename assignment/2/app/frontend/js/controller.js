@@ -2,23 +2,19 @@
 
     // model events
     document.addEventListener('pictureUpdated', function (e) {
-      console.log(e);
       view.loader(e.detail);
     });
 
     document.addEventListener('commentUpdated', function (e) {
-      console.log("reloading comments");
       view.getComments();
     });
 
     document.addEventListener('CommentsLoaded', function (e) {
-      console.log("done loading comments");
         view.loadMessages(e.detail);
     });
 
     // views events
     document.addEventListener('uploadSubmitted', function (e) {
-        console.log(e);
         model.uploadPicture(e.detail);
     });
 

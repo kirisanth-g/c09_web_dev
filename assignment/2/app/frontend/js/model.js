@@ -57,7 +57,7 @@ var model = (function(){
 
     model.reloadComments = function(){
       document.dispatchEvent(new CustomEvent("commentUpdated"));
-    }
+    };
 
     // create msg
     model.uploadMessage = function(data){
@@ -68,7 +68,7 @@ var model = (function(){
     model.loadComments = function(data){
       //Get comments
       doAjax('GET', '/api/comments/' + data.id + '/' + data.offset + '/', data, true, model.loadedComments);
-    }
+    };
 
     // create msg
     model.deleteMessage = function(data){
@@ -77,13 +77,11 @@ var model = (function(){
 
     // Grab Local file
     model.grabLocal = function(pic){
-      console.log(pic);
       doAjax('GET', '/api/picture/local/grab/', pic, true, function(err, info){
-        console.log(info);
         pic.link = info;
         return pic;
       });
-    }
+    };
 
     // Ajax from Lab 6
     var doAjax = function (method, url, body, json, callback){
@@ -91,7 +89,7 @@ var model = (function(){
         xhttp.onreadystatechange = function(e){
             switch(this.readyState){
                  case (XMLHttpRequest.DONE):
-                  console.log(this.status, this.responseText);
+                  //console.log(this.status, this.responseText);
                     if (this.status === 200) {
                         if(json) return callback(null, JSON.parse(this.responseText));
                         model.grabLocal(JSON.parse(this.responseText));
@@ -103,7 +101,6 @@ var model = (function(){
         xhttp.open(method, url, true);
         if (json && body){
             xhttp.setRequestHeader('Content-Type', 'application/json');
-            console.log("HERE", body);
             xhttp.send(JSON.stringify(body));
         }else{
             xhttp.send(body);
