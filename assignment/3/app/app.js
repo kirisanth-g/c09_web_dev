@@ -1,3 +1,8 @@
+var crypto = require('crypto');
+var path = require('path');
+var express = require('express')
+var app = express();
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -105,6 +110,9 @@ app.get('/signout/', function (req, res, next) {
     });
 });
 
+app.use(express.static('frontend'));
+
+
 // signout, signin
 
 app.get('/api/signout/', function (req, res, next) {
@@ -166,7 +174,7 @@ addPicture = function (info, res, next){
 
 // Store a Picture on the Web
 app.post('/api/picture/url/',function (req, res, next) {
-  if (req.params.username !== req.session.user.username) return res.status(403).send("Forbidden");
+  if (req.body.author !== req.session.user.username) return res.status(403).send("Forbidden");
   var info = req.body;
   info.upload = false;
   //Add Picture to DB
@@ -175,7 +183,7 @@ app.post('/api/picture/url/',function (req, res, next) {
 
 // Store a Picture Locally
 app.post('/api/picture/local/', upload.single('picture'), function (req, res, next) {
-  if (req.params.username !== req.session.user.username) return res.status(403).send("Forbidden");
+  if (req.body.author !== req.session.user.username) return res.status(403).send("Forbidden");
   var info = JSON.parse(req.body.data);
   info.upload = true;
   info.link = req.file;
@@ -196,15 +204,13 @@ app.get('/api/picture/:id/', function (req, res, next) {
   if (!isNaN(nid)) {
     pictures.findOne({id: nid}, function(err, pic){
       if(!pic) return res.status(404).end("Picture at id:" + find_id + " not found.");
-      return res.json(pic);
+      getPicture(pic, function(upic){
+         return res.json(upic);
+       });
     });
   }
   //ID was not given
   else {
-    // pictures.find({}).sort({ id: 1 }).limit(1).exec(function (err, docs) {
-    //   if(docs.length === 0) return res.status(400).end("No pictures in db");
-    //   return res.json(docs[0]);
-    // });
     return res.redirect('/gallaries.html');
   }
 });
@@ -213,9 +219,10 @@ app.get('/api/picture/gallary/:user/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
     pictures.find({author: req.params.user}).sort({ id: 1 }).limit(1).exec(function (err, docs) {
       if(docs.length === 0) return res.status(400).end("No pictures in db");
-      return res.json(docs[0]);
+      getPicture(docs[0], function(upic){
+         return res.json(upic);
+       });
     });
-  }
 });
 
 // Get locally stored picture
@@ -224,7 +231,7 @@ app.get('/api/picture/:id/local', function (req, res, next) {
   var nid = parseInt(req.params.id, 10);
   pictures.findOne({id: nid}, function(err, pic){
     if(!pic) return res.status(404).end("Picture at id:" + find_id + " not found.");
-    if (pic.upload){
+    if (pic.link){
       res.setHeader('Content-Type', pic.link.mimetype);
       return res.sendFile(path.join(__dirname, pic.link.path));
     }
@@ -238,10 +245,12 @@ app.get('/api/comments/:id/:offset/:amount', function (req, res, next) {
   var f_id = parseInt(req.params.id, 10);
   var offset = parseInt(req.params.offset, 10);
   var amount = parseInt(req.params.amount, 10);
+  console.log(f_id, offset, amount);
 
   comments.find({pid: f_id}).sort({createdAt: -1}).skip(offset).limit(amount).exec(function(err, comments) {
+    console.log(err, comments);
     if(err) return res.status(404).end("Picture at id:" + f_id + " not found.");
-    res.json(comments);
+    return res.json(comments);
   });
 });
 
@@ -251,7 +260,9 @@ app.get('/api/picture/next/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$gt: curr_id}}).sort({id: 1 }).limit(1).exec(function(err, pic){
     if(pic.length === 0) return res.status(404).end("There is no next picture.");
-    return res.json(pic[0]);
+    getPicture(pic[0], function(upic){
+       return res.json(upic);
+     });
   });
 });
 
@@ -261,7 +272,9 @@ app.get('/api/picture/prev/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}}).sort({id: -1 }).limit(1).exec(function(err, pic){
     if(pic.length === 0) return res.status(404).end("There is no next picture.");
-    return res.json(pic[0]);
+    getPicture(pic[0], function(upic){
+       return res.json(upic);
+     });
   });
 });
 
@@ -271,7 +284,9 @@ app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$gt: curr_id}, author: req.params.user}).sort({id: 1 }).limit(1).exec(function(err, pic){
     if(pic.length === 0) return res.status(404).end("There is no next picture.");
-    return res.json(pic[0]);
+    getPicture(pic[0], function(upic){
+       return res.json(upic);
+     });
   });
 });
 
@@ -280,9 +295,20 @@ app.get('/api/picture/:user/prev/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}, author: req.params.user}).sort({id: -1 }).limit(1).exec(function(err, pic){
     if(pic.length === 0) return res.status(404).end("There is no next picture.");
-    return res.json(pic[0]);
+    getPicture(pic[0], function(upic){
+       return res.json(upic);
+     });
   });
 });
+
+var getPicture = function(pic, next){
+  if(pic.upload){
+    var info = pic.link;
+    pic.link = '/api/picture/' + pic.id + '/local/';
+    pic.mimetype = info.mimetype;
+  }
+  next(pic);
+};
 
 
 // DELETE

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Photo Gala</title>
+	<link href="style/main.css" rel="stylesheet" type="text/css"/>
+	<link href="style/form.css" rel="stylesheet" type="text/css"/>
+	<link href="style/viewer.css" rel="stylesheet" type="text/css"/>
+	<link href="style/messages.css" rel="stylesheet" type="text/css"/>
+</head>
+
+
+<body>
+	<header>
+		<h1>Photo Gala</h1>
+	</header>
+
+	<div class="block">
+	<input type="button" class="button" id="upload_op" value="Upload a Photo">
+	<form class="complex_form" id="upload">
+		<div class="form_title">
+			<p>Upload a Photo</p>
+			<img id="upload_cls" src="media/nav-menu_close_icon.png" alt="Close">
+		</div>
+		<input class="form_element" id="upload_form_name" placeholder="Enter your name"/>
+		<input class="form_element" id="upload_photo_name" placeholder="Enter photo's name"/>
+		<div class="form_radio">
+			<input type="radio" name="type" value="URL" id="url_btn" checked="checked">
+			<p>URL</p>
+			<input type="radio" name="type" value="File Upload" id="file_btn">
+			<p>File Upload</p>
+		</div>
+		<input class="form_element" id="upload_url" placeholder="Enter your image url"/>
+		<input type="file" id="upload_file">
+		<input type="submit" class="btn">
+	</form>
+	</div>
+
+
+	<div class="block viewer" id="display">
+	</div>
+
+	<div class="block" id="msg_entry"></div>
+	<div class="block" id="messages"></div>
+
+
+	<footer class="block">
+		<a href='/credits.html'>Credits</a>
+	</footer>
+    <script src="js/model.js"></script>
+	<script src="js/view.js"></script>
+	<script src="js/controller.js"></script>
+	</body>
+	</html>
