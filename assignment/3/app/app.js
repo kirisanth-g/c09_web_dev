@@ -195,7 +195,7 @@ app.post('/api/picture/local/', upload.single('picture'), function (req, res, ne
 // READ
 
 // Get Picture Given ID
-// TODO Rewrite to get user gallary
+// TODO Rewrite to get user gallery
 app.get('/api/picture/:id/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
@@ -211,11 +211,11 @@ app.get('/api/picture/:id/', function (req, res, next) {
   }
   //ID was not given
   else {
-    return res.redirect('/gallaries.html');
+    return res.redirect('/galleries.html');
   }
 });
 
-app.get('/api/picture/gallary/:user/', function (req, res, next) {
+app.get('/api/picture/gallery/:user/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
     pictures.find({author: req.params.user}).sort({ id: 1 }).limit(1).exec(function (err, docs) {
       if(docs.length === 0) return res.status(400).end("No pictures in db");
@@ -278,7 +278,7 @@ app.get('/api/picture/prev/:currid/', function (req, res, next) {
   });
 });
 
-// Get Next Picture Given User Gallary
+// Get Next Picture Given User gallery
 app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   var curr_id = parseInt(req.params.currid, 10);
@@ -290,7 +290,7 @@ app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
   });
 });
 
-// Get Prev Picture Given User Gallary
+// Get Prev Picture Given User gallery
 app.get('/api/picture/:user/prev/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}, author: req.params.user}).sort({id: -1 }).limit(1).exec(function(err, pic){
@@ -309,6 +309,18 @@ var getPicture = function(pic, next){
   }
   next(pic);
 };
+
+// Get List of users that have gallery
+app.get('/api/users/galleried', function(req, res, next){
+  if (!req.session.user) return res.status(403).end("Forbidden");
+  pictures.find({}).sort({author: 1}).exec(function (err, allPictures){
+    var users = allPictures.map(function(e){return e.author});
+    var selectUsers = users.filter(function(elem, index, self) {
+      return index == self.indexOf(elem);
+    })
+    return res.json(selectUsers);
+  });
+});
 
 
 // DELETE

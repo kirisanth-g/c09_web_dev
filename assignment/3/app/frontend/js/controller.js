@@ -47,4 +47,9 @@
       model.changePic(e.detail);
     });
 
+    // Sign In events
+    document.addEventListener('signIn', function(e){
+      model.signin(e.detail);
+    });
+
 }(model, view));
