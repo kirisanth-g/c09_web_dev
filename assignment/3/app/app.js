@@ -183,8 +183,8 @@ app.post('/api/picture/url/',function (req, res, next) {
 
 // Store a Picture Locally
 app.post('/api/picture/local/', upload.single('picture'), function (req, res, next) {
-  if (req.body.author !== req.session.user.username) return res.status(403).send("Forbidden");
   var info = JSON.parse(req.body.data);
+  if (info.author !== req.session.user.username) return res.status(403).send("Forbidden");
   info.upload = true;
   info.link = req.file;
   //Add Picture to DB
@@ -197,6 +197,7 @@ app.post('/api/picture/local/', upload.single('picture'), function (req, res, ne
 // Get Picture Given ID
 // TODO Rewrite to get user gallery
 app.get('/api/picture/:id/', function (req, res, next) {
+  console.log("helo");
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
   var nid = parseInt(find_id, 10);
@@ -211,7 +212,15 @@ app.get('/api/picture/:id/', function (req, res, next) {
   }
   //ID was not given
   else {
-    return res.redirect('/galleries.html');
+    pictures.find({}).sort({ id: 1 }).limit(1).exec(function (err, docs) {
+      if(docs.length === 0){
+        res.status(400).end("No pictures in db");
+        return next();
+      }
+      res.json(docs[0]);
+      next();
+    });
+    //return res.redirect('/galleries.html');
   }
 });
 

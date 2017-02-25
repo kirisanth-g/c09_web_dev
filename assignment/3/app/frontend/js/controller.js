@@ -34,6 +34,10 @@
         model.deleteMessage(e.detail);
     });
 
+    var getActiveUser = function(callback){
+      model.getActiveUsername(callback);
+    };
+
     //Taken from Lab5
     document.addEventListener('documentLoaded', function (e) {
       model.init(e.detail);
@@ -47,9 +51,5 @@
       model.changePic(e.detail);
     });
 
-    // Sign In events
-    document.addEventListener('signIn', function(e){
-      model.signin(e.detail);
-    });
 
 }(model, view));

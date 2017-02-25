@@ -230,6 +230,12 @@ var view = (function(){
 		<input type="button" class="pic_button" id="del" onclick="view.deletePicture()" value="x">
 		<input type="button" class="pic_button" id="next" onclick="view.changePic(1)" value=">">`;
 		container.append(btn);
+		model.getActiveUsername(function(err, username){
+			if (curr_pic.author!==username){
+				var del_btn = document.getElementById("del");
+				del_btn.style.visibility = "hidden";
+			}
+		});
 		view.checkBtn();
 	};
 
@@ -268,44 +274,49 @@ var view = (function(){
 
 	// Loads Comments
 	view.loadMessages = function(messages){
-		var container = document.getElementById("messages");
-		container.innerHTML = "";
-		// Create Comments
-		messages.forEach(function (message){
-			// create the message element
-			var e = document.createElement('div');
-			e.className = "message";
-			e.id = message._id;
-			e.innerHTML = `
-			<div class="author">${message.author}</div>
-			<div class="content">${message.content}</div>`;
-			// Details
-			var d = document.createElement('div');
-			d.className = "details";
-			var date = new Date(message.createdAt);
-			d.innerHTML = `<div class="date">${date}</div>`;
-			// add delete button
-			var deleteButton = document.createElement('div');
-			deleteButton.className = "delete-icon icon";
-			deleteButton.onclick = function (e){
-				var data = {};
-				data.mid = e.target.parentNode.parentNode.id;
-				data.pid = curr_pic.id;
-				document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
-			};
-			d.append(deleteButton);
-			e.append(d);
-			// add this element to the document
-			container.prepend(e);
+		model.getActiveUsername(function(err, username){
+			var container = document.getElementById("messages");
+			container.innerHTML = "";
+			// Create Comments
+			messages.forEach(function (message){
+				// create the message element
+				var e = document.createElement('div');
+				e.className = "message";
+				e.id = message._id;
+				e.innerHTML = `
+				<div class="author">${message.author}</div>
+				<div class="content">${message.content}</div>`;
+				// Details
+				var d = document.createElement('div');
+				d.className = "details";
+				var date = new Date(message.createdAt);
+				d.innerHTML = `<div class="date">${date}</div>`;
+				// add delete button
+				var deleteButton = document.createElement('div');
+				deleteButton.className = "delete-icon icon";
+				deleteButton.onclick = function (e){
+					var data = {};
+					data.mid = e.target.parentNode.parentNode.id;
+					data.pid = curr_pic.id;
+					document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
+				};
+				if (message.author!==username){
+	        deleteButton.style.visibility = "hidden";
+	      }
+				d.append(deleteButton);
+				e.append(d);
+				// add this element to the document
+				container.append(e);
+			});
+			// Set up msg buttons
+			var btn = document.createElement('div');
+			btn.className = "btn_group";
+			btn.innerHTML= `
+			<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="<">
+			<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value=">">`;
+			container.prepend(btn);
+			//view.checkMsgBtn(cutoff);
 		});
-		// Set up msg buttons
-		var btn = document.createElement('div');
-		btn.className = "btn_group";
-		btn.innerHTML= `
-		<input type="button" class="pic_button" id="msg_prev" onclick="view.changeMsg(-10)" value="<">
-		<input type="button" class="pic_button" id="msg_next" onclick="view.changeMsg(10)" value=">">`;
-		container.prepend(btn);
-		//view.checkMsgBtn(cutoff);
 	};
 
 	// Refreshed frontend to next/prev picture

@@ -6,7 +6,7 @@ var model = (function(){
 
     // init
     model.init = function (data){
-      console.log(data);
+      console.log("init", data);
       // fetch inital picture
       doAjax('GET', '/api/picture/' + data.url_id +'/', data, true, model.loadPicture);
     };
@@ -15,14 +15,15 @@ var model = (function(){
 
     model.signOut = function(callback){
         doAjax('DELETE', '/api/signout/', null, false, callback);
-    }
+    };
 
     model.signIn = function(data, callback){
+      console.log("model");
         doAjax('POST', '/api/signin/', data, true, function(err, user){
             if (err) return callback(err, user);
             callback(null, user);
         });
-    }
+    };
 
     // create
 
@@ -51,9 +52,9 @@ var model = (function(){
     //Change picture
     model.changePic = function (data){
       if(data.i >= 0){
-        doAjax('GET', '/api/picture/next/' + data.id +'/10', data, true, model.loadPicture);
+        doAjax('GET', '/api/picture/next/' + data.id +'/', data, true, model.loadPicture);
       }else{
-        doAjax('GET', '/api/picture/prev/' + data.id +'/10', data, true, model.loadPicture);
+        doAjax('GET', '/api/picture/prev/' + data.id +'/', data, true, model.loadPicture);
       }
     };
 
@@ -83,7 +84,7 @@ var model = (function(){
 
     model.loadComments = function(data){
       //Get comments
-      doAjax('GET', '/api/comments/' + data.id + '/' + data.offset + '/', data, true, model.loadedComments);
+      doAjax('GET', '/api/comments/' + data.id + '/' + data.offset + '/10', data, true, model.loadedComments);
     };
 
     // create msg
@@ -122,6 +123,15 @@ var model = (function(){
             xhttp.send(body);
         }
     };
+
+    model.getActiveUsername = function(callback){
+      var keyValuePairs = document.cookie.split('; ');
+      for(var i in keyValuePairs){
+          var keyValue = keyValuePairs[i].split('=');
+          if(keyValue[0]=== 'username') return callback(null, keyValue[1]);
+      }
+      return callback("No active user", null);
+    }
 
 
     return model;
