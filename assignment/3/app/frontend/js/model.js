@@ -38,19 +38,33 @@ var model = (function(){
 
     // create
     model.uploadPicture = function (data){
+      model.getActiveUsername(function(err, username){
+        data.author = username;
         // Upload the Picture
-        doAjax('POST', '/api/picture/local/', data, false, model.loadPicture);
+        doAjax('POST', '/api/picture/local/', data, false, model.reloadPicture);
+      });
     };
 
     model.urlLoadPicture = function (data){
-      console.log(data);
+      model.getActiveUsername(function(err, username){
+        data.author = username;
         // Upload the Picture
         doAjax('POST', '/api/picture/url/', data, true, model.loadPicture);
+      });
     };
+
+    model.reloadPicture = function(err, data){
+      var info = [];
+      if (data) info = JSON.parse(data);
+      if (err) return document.dispatchEvent(new CustomEvent("404", {'detail': err })) ;
+      doAjax('GET', '/api/picture/' + info.id +'/', data, true, model.loadPicture);
+    }
 
     // delete
     model.deletePicture = function (data){
-        doAjax('DELETE', '/api/picture/' + data.id +'/', data, true, model.init);
+      doAjax('DELETE', '/api/picture/' + data.id +'/', data, true, function(err, data){
+        model.reloadPicture(err)
+      });
     };
 
     //Change picture
@@ -69,8 +83,7 @@ var model = (function(){
 
     //save pics
     model.loadPicture = function(err, picture){
-      // if (err) return showError(err);
-      if (err) document.dispatchEvent(new CustomEvent("404", {'detail': err })) ;
+      if (err) return document.dispatchEvent(new CustomEvent("404", {'detail': err })) ;
       document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': picture }));
     };
 
@@ -87,7 +100,10 @@ var model = (function(){
     // create msg
     model.uploadMessage = function(data){
       // Upload the Comment
-      doAjax('POST', '/api/comment/', data, true, model.reloadComments);
+      model.getActiveUsername(function(err, username){
+        data.author = username;
+        doAjax('POST', '/api/comment/', data, true, model.reloadComments);
+      });
     };
 
     model.loadComments = function(data){
@@ -97,7 +113,7 @@ var model = (function(){
 
     // create msg
     model.deleteMessage = function(data){
-        doAjax('DELETE', '/api/comment/'+ data.pid + '/' + data.mid + '/', data, true, model.reloadComments);
+      doAjax('DELETE', '/api/comment/'+ data.pid + '/' + data.mid + '/', data, true, model.reloadComments);
     };
 
     // Grab Local file

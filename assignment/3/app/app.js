@@ -194,7 +194,6 @@ app.post('/api/picture/local/', upload.single('picture'), function (req, res, ne
 // READ
 
 // Get Picture Given ID
-// TODO Rewrite to get user gallery
 app.get('/api/picture/:id/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
@@ -252,10 +251,8 @@ app.get('/api/comments/:id/:offset/:amount', function (req, res, next) {
   var f_id = parseInt(req.params.id, 10);
   var offset = parseInt(req.params.offset, 10);
   var amount = parseInt(req.params.amount, 10);
-  console.log(f_id, offset, amount);
 
   comments.find({pid: f_id}).sort({createdAt: -1}).skip(offset).limit(amount).exec(function(err, comments) {
-    console.log(err, comments);
     if(err) return res.status(404).end("Picture at id:" + f_id + " not found.");
     return res.json(comments);
   });
@@ -278,7 +275,7 @@ app.get('/api/picture/prev/:currid/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}}).sort({id: -1 }).limit(1).exec(function(err, pic){
-    if(pic.length === 0) return res.status(404).end("There is no next picture.");
+    if(pic.length === 0) return res.status(404).end("There is no previous picture.");
     getPicture(pic[0], function(upic){
        return res.json(upic);
      });
@@ -301,7 +298,7 @@ app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
 app.get('/api/picture/:user/prev/:currid/', function (req, res, next) {
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}, author: req.params.user}).sort({id: -1 }).limit(1).exec(function(err, pic){
-    if(pic.length === 0) return res.status(404).end("There is no next picture.");
+    if(pic.length === 0) return res.status(404).end("There is no previous picture.");
     getPicture(pic[0], function(upic){
        return res.json(upic);
      });
@@ -351,23 +348,26 @@ app.delete('/api/picture/:id/', function (req, res, next) {
       //Remove Comments
       comments.remove({pid: nid }, {multi: true}, function (err, numRemoved) {
         if (err) return res.status(500).send("Database error");
-        return res.end();
+        return res.json({});
       });
     });
   });
 });
 
-//TODO Make picture owner able to delete
 // Delete Comment
-app.delete('/api/comment/:pid/:cid', function (req, res, next) {
+app.delete('/api/comment/:pid/:cid/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   comments.findOne({ _id: req.params.cid }, function(err, comment){
     if (err) return res.status(404).end("Message id:" + req.params.id + " does not exists");
-    if (comment.author !== req.session.user.username) return res.status(403).send("Unauthorized");
-    //Remove Comment
-    comments.remove({_id: req.params.cid }, {}, function(err, num) {
-      if (err) return res.status(500).send("Database error");
-      return res.end();
+    var pic_id = parseInt(req.params.pid, 10)
+    pictures.findOne({ id: pic_id }, function(err, picture){
+      if (err) return res.status(404).end("Picture id:" + req.params.pid + " does not exists");
+      if (comment.author !== req.session.user.username && picture.author !== req.session.user.username) return res.status(403).send("Unauthorized");
+      //Remove Comment
+      comments.remove({_id: req.params.cid }, {}, function(err, num) {
+        if (err) return res.status(500).send("Database error");
+        return res.json({});
+      });
     });
   });
 });

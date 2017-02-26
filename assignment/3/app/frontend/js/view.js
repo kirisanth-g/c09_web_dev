@@ -1,8 +1,6 @@
 /* jshint esversion: 6*/
 var view = (function(){
 	var view = {};
-	var pictures = []; //not used
-	var curr_pic_index; //not used
 	var msg_offset = 0;
 	var url_data = [];
 	var curr_pic;
@@ -12,26 +10,20 @@ var view = (function(){
 	window.onload = function scheduler(e){
 		url_data.url_id = getParameter('id');
 		url_data.user_gala = getParameter('user');
+		var upload = document.getElementById('upblock');
 
-		if(!url_data.user_gala){
-			var all_btn = document.getElementById("all_button");
-			all_btn.style.display = 'none';
-		}
-		// if(url_id){
-		// 	var id = findIndex(url_id);
-		// 	url_id ='';
-		// 	if(id >= 0){
-		// 		curr_pic_index = id;
-		// 	}
-		// 	//404
-		// 	else{
-		// 		return view.set404();
-		// 	}
-		// }else{
-		// 	curr_pic_index = pictures.length-1;
-		// }
-		// view.loadElements();
-		document.dispatchEvent(new CustomEvent("documentLoaded", {'detail': url_data }));
+		model.getActiveUsername(function(err, username){
+			console.log(url_data.user_gala, username);
+			if(!url_data.user_gala){
+				var all_btn = document.getElementById("all_button");
+				all_btn.style.display = 'none';
+			}else if(url_data.user_gala === username){
+				upload.style.display = 'block';
+			}else{
+				upload.style.display = 'none';
+			}
+			document.dispatchEvent(new CustomEvent("documentLoaded", {'detail': url_data }));
+		});
 	};
 
 
@@ -70,11 +62,15 @@ var view = (function(){
 	document.getElementById('file_btn').onclick = function(e){
 		document.getElementById('upload_url').style.display = 'none';
 		document.getElementById('upload_file').style.display = 'flex';
+		document.getElementById('upload_url').required = false;
+		document.getElementById('upload_file').required = true;
 	};
 
 	document.getElementById('url_btn').onclick = function(e){
 		document.getElementById('upload_file').style.display = 'none';
 		document.getElementById('upload_url').style.display = 'flex';
+		document.getElementById('upload_url').required = true;
+		document.getElementById('upload_file').required = false;
 	};
 
 
@@ -85,7 +81,6 @@ var view = (function(){
 		// read form elements
 		var data = {};
 		var file;
-		data.author = document.getElementById('upload_form_name').value;
 		data.content = document.getElementById('upload_photo_name').value;
 		var type = document.querySelector('input[name="type"]:checked').value;
 
@@ -119,15 +114,6 @@ var view = (function(){
 		}
 	};
 
-	//Find index of picture
-	findIndex = function(id){
-		for (var i = 0; i < pictures.length; i++){
-			if(pictures[i].id == id){
-				return i;
-			}
-		}
-	};
-
 	//404
 	view.set404 = function(details){
 		console.log(details);
@@ -139,7 +125,7 @@ var view = (function(){
 			<h1>404</h1>
 			<h3>Image Not Found</h3>
 			<p>${details}</p>`;
-		document.getElementById("display").style.display = "flex";
+		document.getElementById("display").style.display = "block";
 	};
 
 	// Relaods all info and refreshed frontend to last picture
@@ -149,11 +135,6 @@ var view = (function(){
 		view.loadElements();
 	};
 
-	// Relaods all info and refreshed frontend
-	view.refresh = function(pics){
-		pictures = pics;
-		view.loadElements();
-	};
 
 	// Refreshed frontend to next/prev picture
 	view.changePic = function(i){
@@ -165,18 +146,18 @@ var view = (function(){
 	};
 
 	// Locks and Unlocks next/prev buttons
-	view.checkBtn = function(){
-		if(curr_pic_index == pictures.length-1){
-			document.getElementById('next').disabled = true;
-		}
-		if(curr_pic_index === 0){
-			document.getElementById('prev').disabled = true;
-		}
-		if(0 < curr_pic_index && curr_pic_index < pictures.length-1){
-			document.getElementById('next').disabled = false;
-			document.getElementById('prev').disabled = false;
-		}
-	};
+	// view.checkBtn = function(){
+	// 	if(curr_pic_index == pictures.length-1){
+	// 		document.getElementById('next').disabled = true;
+	// 	}
+	// 	if(curr_pic_index === 0){
+	// 		document.getElementById('prev').disabled = true;
+	// 	}
+	// 	if(0 < curr_pic_index && curr_pic_index < pictures.length-1){
+	// 		document.getElementById('next').disabled = false;
+	// 		document.getElementById('prev').disabled = false;
+	// 	}
+	// };
 
 	// Handles Delete Button
 	view.deletePicture = function(){
@@ -243,7 +224,7 @@ var view = (function(){
 				del_btn.style.visibility = "hidden";
 			}
 		});
-		view.checkBtn();
+		//view.checkBtn();
 	};
 
 	// Handles Comment Submission
@@ -251,7 +232,6 @@ var view = (function(){
 		// Grab Form Elements
 		var data = {};
 		data.id = curr_pic.id;
-		data.author = document.getElementById('msg_name').value;
 		data.content = document.getElementById('msg_content').value;
 		// Clean Form
 		document.getElementById("comment").reset();
@@ -273,8 +253,7 @@ var view = (function(){
 		container.innerHTML = `
 		<form class="comment_form" id="comment">
 		<div class="form_title">Write a Comment</div>
-		<input class="form_element" id="msg_name" placeholder="Enter your name"></input>
-		<textarea class="form_element" id="msg_content" placeholder="Comment"></textarea>
+		<textarea class="form_element" id="msg_content" placeholder="Comment" required></textarea>
 		<input type="button" class="button" onclick="view.enterMsg()" class="btn" value="Comment">
 		</form>`;
 	};
@@ -307,7 +286,7 @@ var view = (function(){
 					data.pid = curr_pic.id;
 					document.dispatchEvent(new CustomEvent("deleteMsg", {'detail': data}));
 				};
-				if (message.author!==username){
+				if (message.author!== username && curr_pic.author !== username){
 	        deleteButton.style.visibility = "hidden";
 	      }
 				d.append(deleteButton);
@@ -334,14 +313,14 @@ var view = (function(){
 	};
 
 	// Locks and Unlocks msg next/prev buttons
-	view.checkMsgBtn = function(cutoff){
-		if(msg_offset === 0){
-			document.getElementById('msg_prev').disabled = true;
-		}
-		if(cutoff <= 10){
-			document.getElementById('msg_next').disabled = true;
-		}
-	};
+	// view.checkMsgBtn = function(cutoff){
+	// 	if(msg_offset === 0){
+	// 		document.getElementById('msg_prev').disabled = true;
+	// 	}
+	// 	if(cutoff <= 10){
+	// 		document.getElementById('msg_next').disabled = true;
+	// 	}
+	// };
 
 	// Change url
 	view.changeUrl = function(check){
