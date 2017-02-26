@@ -98,7 +98,7 @@ app.get('/', function (req, res, next) {
     return next();
 });
 
-app.get('/profile.html', function (req, res, next) {
+app.get('/galleries.html', function (req, res, next) {
     if (!req.session.user) return res.redirect('/signin.html');
     return next();
 });
@@ -320,14 +320,19 @@ var getPicture = function(pic, next){
 };
 
 // Get List of users that have gallery
-app.get('/api/users/galleried', function(req, res, next){
+app.get('/api/users/galleried/:offset/:amount', function(req, res, next){
   if (!req.session.user) return res.status(403).end("Forbidden");
   pictures.find({}).sort({author: 1}).exec(function (err, allPictures){
     var users = allPictures.map(function(e){return e.author});
     var selectUsers = users.filter(function(elem, index, self) {
       return index == self.indexOf(elem);
     })
-    return res.json(selectUsers);
+    var cutoff = selectUsers.length - req.params.offset;
+    if (cutoff <= 0){
+      cutoff = selectUsers.length;
+    }
+    var selUsers = selectUsers.slice(0, cutoff).slice(-req.params.amount);
+    return res.json(selUsers);
   });
 });
 

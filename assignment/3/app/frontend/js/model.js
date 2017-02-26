@@ -100,6 +100,16 @@ var model = (function(){
       });
     };
 
+    // Grab users
+    model.loadUsers = function(data){
+      //Get comments
+      doAjax('GET', '/api/users/galleried/' + data.offset + '/10', data, true, model.loadedComments);
+    };
+
+    model.loadedUsers = function(err, comments){
+      if (err) return ;
+      document.dispatchEvent(new CustomEvent("LoadedGalas", {'detail': comments}));
+    };
     // Ajax from Lab 6
     var doAjax = function (method, url, body, json, callback){
         var xhttp = new XMLHttpRequest();
