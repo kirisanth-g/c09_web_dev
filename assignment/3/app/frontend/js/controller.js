@@ -13,6 +13,10 @@
         view.loadMessages(e.detail);
     });
 
+    document.addEventListener('404', function (e) {
+        view.set404(e.detail);
+    });
+
     // views events
     document.addEventListener('uploadSubmitted', function (e) {
         model.uploadPicture(e.detail);

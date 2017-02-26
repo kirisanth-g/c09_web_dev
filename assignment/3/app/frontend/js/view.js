@@ -1,18 +1,22 @@
 /* jshint esversion: 6*/
 var view = (function(){
 	var view = {};
-	var pictures = [];
-	var curr_pic_index;
+	var pictures = []; //not used
+	var curr_pic_index; //not used
 	var msg_offset = 0;
-	var url_id;
-
+	var url_data = [];
 	var curr_pic;
 
 
 	// --Taken form Lab5
 	window.onload = function scheduler(e){
-		var data = [];
-		data.url_id = getParameter('id');
+		url_data.url_id = getParameter('id');
+		url_data.user_gala = getParameter('user');
+
+		if(!url_data.user_gala){
+			var all_btn = document.getElementById("all_button");
+			all_btn.style.display = 'none';
+		}
 		// if(url_id){
 		// 	var id = findIndex(url_id);
 		// 	url_id ='';
@@ -27,7 +31,7 @@ var view = (function(){
 		// 	curr_pic_index = pictures.length-1;
 		// }
 		// view.loadElements();
-		document.dispatchEvent(new CustomEvent("documentLoaded", {'detail': data }));
+		document.dispatchEvent(new CustomEvent("documentLoaded", {'detail': url_data }));
 	};
 
 
@@ -125,15 +129,17 @@ var view = (function(){
 	};
 
 	//404
-	view.set404 = function(){
+	view.set404 = function(details){
+		console.log(details);
 		view.clearPage();
 		view.changeUrl(false);
 		// var container = document.getElementsByTagName("BODY")[0];
 		var e = document.getElementById("display");
-		e.style.display = "flex";
 		e.innerHTML = `
 			<h1>404</h1>
-			<h3>Image Not Found</h3>`;
+			<h3>Image Not Found</h3>
+			<p>${details}</p>`;
+		document.getElementById("display").style.display = "flex";
 	};
 
 	// Relaods all info and refreshed frontend to last picture
@@ -154,6 +160,7 @@ var view = (function(){
 		var data = [];
 		data.i = i;
 		data.id = curr_pic.id;
+		data.user_gala = url_data.user_gala;
 		document.dispatchEvent(new CustomEvent("changePicture", {'detail': data }));
 	};
 
@@ -338,10 +345,14 @@ var view = (function(){
 
 	// Change url
 	view.changeUrl = function(check){
+		var url_link = "/";
+		if(url_data.user_gala){
+			url_link = "/?user=" + url_data.user_gala + "&";
+		}
 		if(check){
-			window.history.replaceState(null, null, "/?id=" + curr_pic.id.toString());
+			window.history.replaceState(null, null, url_link + "?id=" + curr_pic.id.toString());
 		}else{
-			window.history.replaceState(null, null, "");
+			window.history.replaceState(null, null, url_link + "");
 		}
 	};
 

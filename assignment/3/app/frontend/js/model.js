@@ -8,7 +8,11 @@ var model = (function(){
     model.init = function (data){
       console.log("init", data);
       // fetch inital picture
-      doAjax('GET', '/api/picture/' + data.url_id +'/', data, true, model.loadPicture);
+      if (data.user_gala){
+        doAjax('GET', '/api/picture/gallery/' + data.user_gala +'/', data, true, model.loadPicture);
+      }else {
+        doAjax('GET', '/api/picture/' + data.url_id +'/', data, true, model.loadPicture);
+      }
     };
 
     // signUp, signIn and signOut
@@ -51,10 +55,14 @@ var model = (function(){
 
     //Change picture
     model.changePic = function (data){
+      var api_link = "";
+      if(data.user_gala){
+        api_link = "/" + data.user_gala
+      }
       if(data.i >= 0){
-        doAjax('GET', '/api/picture/next/' + data.id +'/', data, true, model.loadPicture);
+        doAjax('GET', '/api/picture' + api_link + '/next/' + data.id +'/', data, true, model.loadPicture);
       }else{
-        doAjax('GET', '/api/picture/prev/' + data.id +'/', data, true, model.loadPicture);
+        doAjax('GET', '/api/picture' + api_link + '/prev/' + data.id +'/', data, true, model.loadPicture);
       }
     };
 
@@ -62,7 +70,7 @@ var model = (function(){
     //save pics
     model.loadPicture = function(err, picture){
       // if (err) return showError(err);
-      if (err) return ;
+      if (err) document.dispatchEvent(new CustomEvent("404", {'detail': err })) ;
       document.dispatchEvent(new CustomEvent("pictureUpdated", {'detail': picture }));
     };
 
@@ -103,7 +111,7 @@ var model = (function(){
     // Grab users
     model.loadUsers = function(data){
       //Get comments
-      doAjax('GET', '/api/users/galleried/' + data.offset + '/10', data, true, model.loadedComments);
+      doAjax('GET', '/api/users/galleried/' + data.offset + '/10', data, true, model.loadedUsers);
     };
 
     model.loadedUsers = function(err, comments){

@@ -112,7 +112,6 @@ app.get('/signout/', function (req, res, next) {
 
 app.use(express.static('frontend'));
 
-
 // signout, signin
 
 app.get('/api/signout/', function (req, res, next) {
@@ -197,7 +196,6 @@ app.post('/api/picture/local/', upload.single('picture'), function (req, res, ne
 // Get Picture Given ID
 // TODO Rewrite to get user gallery
 app.get('/api/picture/:id/', function (req, res, next) {
-  console.log("helo");
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
   var nid = parseInt(find_id, 10);
@@ -359,6 +357,7 @@ app.delete('/api/picture/:id/', function (req, res, next) {
   });
 });
 
+//TODO Make picture owner able to delete
 // Delete Comment
 app.delete('/api/comment/:pid/:cid', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");

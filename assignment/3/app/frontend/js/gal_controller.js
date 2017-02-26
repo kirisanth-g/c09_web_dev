@@ -1,7 +1,7 @@
 (function(model, galleries){
 
   // model events
-  document.addEventListener('loadedGalas', function (e) {
+  document.addEventListener('LoadedGalas', function (e) {
     galleries.loader(e.detail);
   });
 
