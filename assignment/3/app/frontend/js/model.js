@@ -26,7 +26,7 @@ var model = (function(){
         doAjax('POST', '/api/signin/', data, true, function(err, user){
             if (err) return callback(err, user);
             // update the local storage with username
-            localStorage.setItem("user", JSON.stringify(user.username));
+            localStorage.setItem("user", JSON.stringify(user));
             callback(null, user);
         });
     };

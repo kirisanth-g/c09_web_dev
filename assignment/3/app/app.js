@@ -142,7 +142,7 @@ app.post('/api/signin/', function (req, res, next) {
         if (!user || !checkPassword(user, req.body.password)) return res.status(401).end("Unauthorized");
         req.session.user = user;
         res.cookie('username', user.username, { secure: true, httpOnly: true, sameSite: true});
-        return res.json(user);
+        return res.json(user.username);
     });
 });
 
@@ -162,7 +162,7 @@ app.put('/api/users/', function (req, res, next) {
       if (user) return res.status(409).end("Username " + req.body.username + " already exists");
       users.insert(data, function (err, user) {
           if (err) return res.status(500).end(err);
-          return res.json(user);
+          return res.json(user.username);
       });
   });
 });
