@@ -1,15 +1,27 @@
 {"pid":17,"content":"hey","author":null,"_id":"4hgBLB1vb8kFzX5M","createdAt":{"$$date":1488150488858},"updatedAt":{"$$date":1488150488858}}
 {"pid":0,"content":"4","author":"4","_id":"A4DPYNo0n9iyRnaC","createdAt":{"$$date":1488061574183},"updatedAt":{"$$date":1488061574183}}
+{"pid":0,"content":"&lt;script&gt;alert(&quot;hello&quot;)&lt;&#x2F;script&gt;","author":"42","_id":"AbGZOmaJUHmNWlUB","createdAt":{"$$date":1488158176065},"updatedAt":{"$$date":1488158176065}}
 {"pid":0,"content":"sgd","author":"sdgf","_id":"BZMjsKJqFZVzbSzb","createdAt":{"$$date":1488061531892},"updatedAt":{"$$date":1488061531892}}
 {"pid":0,"content":"6","author":"6","_id":"BfWIbf0hFDUzGOue","createdAt":{"$$date":1488061583260},"updatedAt":{"$$date":1488061583260}}
 {"pid":0,"content":"3","author":"3","_id":"MLYXfhrOS192tQdo","createdAt":{"$$date":1488061571080},"updatedAt":{"$$date":1488061571080}}
 {"pid":0,"content":"7","author":"7","_id":"MuzH8UGidZwshmsK","createdAt":{"$$date":1488061585835},"updatedAt":{"$$date":1488061585835}}
+{"pid":3,"content":"sdfsd","author":"hello","_id":"N3lSV2qX67NpIskz","createdAt":{"$$date":1488166316625},"updatedAt":{"$$date":1488166316625}}
+{"pid":0,"content":"sdf","author":"42","_id":"Nwo3opmRH2a9acmG","createdAt":{"$$date":1488166225405},"updatedAt":{"$$date":1488166225405}}
 {"pid":0,"content":"sdfd","author":"42","_id":"QNbPf2ZWtZjFgxSW","createdAt":{"$$date":1488150737926},"updatedAt":{"$$date":1488150737926}}
-{"pid":0,"content":"","author":"42","_id":"SAwSVGWUsKlL3ByL","createdAt":{"$$date":1488150740121},"updatedAt":{"$$date":1488150740121}}
 {"pid":"42","content":"say 42","author":"user42","_id":"SGYyVNQmv1yaI7zV","createdAt":{"$$date":1487886010803},"updatedAt":{"$$date":1487886010803}}
+{"pid":0,"content":"dfgsfdgsdfgd","author":"42","_id":"SzWU6sknLlCUgLmS","createdAt":{"$$date":1488166275907},"updatedAt":{"$$date":1488166275907}}
+{"pid":0,"content":"sdf","author":"42","_id":"Ztn9qKorjEVBG9Ml","createdAt":{"$$date":1488158153200},"updatedAt":{"$$date":1488158153200}}
 {"pid":42,"content":"say 42","author":"user42","_id":"dMY7drAevrjUlT47","createdAt":{"$$date":1487886599177},"updatedAt":{"$$date":1487886599177}}
 {"pid":0,"content":"salk;f","author":"42","_id":"kAZeh4uNCxrEgj5e","createdAt":{"$$date":1488063442148},"updatedAt":{"$$date":1488063442148}}
 {"pid":0,"content":"5","author":"5","_id":"m6cE0IsQIEFav7HV","createdAt":{"$$date":1488061576500},"updatedAt":{"$$date":1488061576500}}
+{"pid":0,"content":"dfg","author":"42","_id":"sE8OBB6tE6hdEj93","createdAt":{"$$date":1488161894487},"updatedAt":{"$$date":1488161894487}}
 {"pid":0,"content":"2","author":"2","_id":"xBrTKWLFyYXdG3FO","createdAt":{"$$date":1488061567708},"updatedAt":{"$$date":1488061567708}}
 {"pid":0,"content":"8","author":"8","_id":"zANqUhQ5pPdPgaWN","createdAt":{"$$date":1488061588456},"updatedAt":{"$$date":1488061588456}}
-{"$$deleted":true,"_id":"SAwSVGWUsKlL3ByL"}
+{"$$deleted":true,"_id":"N3lSV2qX67NpIskz"}
+{"pid":0,"content":"Hello","author":"hello","_id":"G3DulxUNUn7qzPym","createdAt":{"$$date":1488166587498},"updatedAt":{"$$date":1488166587498}}
+{"pid":1,"content":"Again?","author":"hello","_id":"10Va4Qwx7PO9cWL3","createdAt":{"$$date":1488166598897},"updatedAt":{"$$date":1488166598897}}
+{"pid":16,"content":"That my thing to do...","author":"hello","_id":"oGLwTTTGM5m8SkNL","createdAt":{"$$date":1488166615805},"updatedAt":{"$$date":1488166615805}}
+{"pid":17,"content":"well played","author":"hello","_id":"bg8OyARmp7xDSjjF","createdAt":{"$$date":1488166626186},"updatedAt":{"$$date":1488166626186}}
+{"$$deleted":true,"_id":"4hgBLB1vb8kFzX5M"}
+{"pid":27,"content":"Getting in the game I see","author":"42","_id":"SfPK3g65wxnW3jic","createdAt":{"$$date":1488166663186},"updatedAt":{"$$date":1488166663186}}
+{"pid":28,"content":"PIXEL!","author":"42","_id":"5xpKWTZzy3ggaTPC","createdAt":{"$$date":1488166674434},"updatedAt":{"$$date":1488166674434}}

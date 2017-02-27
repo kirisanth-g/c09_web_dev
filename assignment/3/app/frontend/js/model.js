@@ -17,14 +17,16 @@ var model = (function(){
 
     // signUp, signIn and signOut
 
-    model.signOut = function(callback){
-        doAjax('DELETE', '/api/signout/', null, false, callback);
-    };
+    // model.signOut = function(callback){
+    //     doAjax('DELETE', '/api/signout/', null, false, callback);
+    // };
 
     model.signIn = function(data, callback){
       console.log("model");
         doAjax('POST', '/api/signin/', data, true, function(err, user){
             if (err) return callback(err, user);
+            // update the local storage with username
+            localStorage.setItem("user", JSON.stringify(user.username));
             callback(null, user);
         });
     };
@@ -38,16 +40,14 @@ var model = (function(){
 
     // create
     model.uploadPicture = function (data){
-      model.getActiveUsername(function(err, username){
-        data.author = username;
-        // Upload the Picture
-        doAjax('POST', '/api/picture/local/', data, false, model.reloadPicture);
-      });
+      // Upload the Picture
+      doAjax('POST', '/api/picture/local/', data, false, model.reloadPicture);
     };
 
     model.urlLoadPicture = function (data){
       model.getActiveUsername(function(err, username){
         data.author = username;
+        console.log(data, data.author);
         // Upload the Picture
         doAjax('POST', '/api/picture/url/', data, true, model.loadPicture);
       });
@@ -159,14 +159,13 @@ var model = (function(){
     };
 
     model.getActiveUsername = function(callback){
-      var keyValuePairs = document.cookie.split('; ');
-      for(var i in keyValuePairs){
-          var keyValue = keyValuePairs[i].split('=');
-          if(keyValue[0]=== 'username') return callback(null, keyValue[1]);
+      var data = localStorage.getItem("user");
+      if (data){
+          var username = JSON.parse(data)
+          return callback(null, username);
       }
       return callback("No active user", null);
     }
-
 
     return model;
 

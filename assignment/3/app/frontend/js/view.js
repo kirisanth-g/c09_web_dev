@@ -108,8 +108,11 @@ var view = (function(){
 				// Send out data and event
 				var formd = new FormData();
         formd.append("picture", file);
-        formd.append("data", JSON.stringify(data));
-				document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': formd }));
+				model.getActiveUsername(function(err, username){
+					data.author = username;
+        	formd.append("data", JSON.stringify(data));
+					document.dispatchEvent(new CustomEvent("uploadSubmitted", {'detail': formd }));
+				});
 			}
 		}
 	};

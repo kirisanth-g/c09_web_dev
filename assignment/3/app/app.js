@@ -1,11 +1,14 @@
 var crypto = require('crypto');
 var path = require('path');
-var express = require('express')
+var expressValidator = require('express-validator');
+var cookieParser = require('cookie-parser')
+var express = require('express');
 var app = express();
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(expressValidator());
 
 var multer  = require('multer');
 var upload = multer({ dest: 'uploads/' });
@@ -78,15 +81,21 @@ var checkPassword = function(user, password){
         return (user.saltedHash === value);
 };
 
+app.use(cookieParser('keyboard cat', {
+  secure: true,
+  sameSite: true
+}));
 var session = require('express-session');
 app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: true,
+              sameSite: true}
 }));
 
 app.use(function (req, res, next){
-    console.log("HTTP request", req.method, req.url, req.body);
+    console.log("HTTPS request", req.method, req.url, req.body);
     return next();
 });
 
@@ -112,6 +121,7 @@ app.get('/signout/', function (req, res, next) {
 
 app.use(express.static('frontend'));
 
+
 // signout, signin
 
 app.get('/api/signout/', function (req, res, next) {
@@ -122,12 +132,16 @@ app.get('/api/signout/', function (req, res, next) {
 });
 
 app.post('/api/signin/', function (req, res, next) {
+  req.checkBody('username', 'Invalid username').notEmpty();
+  req.checkBody('password', 'Invalid password').notEmpty();
+  req.sanitizeBody('username').escape();
+  req.sanitizeBody('password').escape();
     if (!req.body.username || ! req.body.password) return res.status(400).send("Bad Request");
     users.findOne({username: req.body.username}, function(err, user){
         if (err) return res.status(500).end(err);
         if (!user || !checkPassword(user, req.body.password)) return res.status(401).end("Unauthorized");
         req.session.user = user;
-        res.cookie('username', user.username);
+        res.cookie('username', user.username, { secure: true, httpOnly: true, sameSite: true});
         return res.json(user);
     });
 });
@@ -137,19 +151,33 @@ app.post('/api/signin/', function (req, res, next) {
 
 // Add new user
 app.put('/api/users/', function (req, res, next) {
-    var data = new User(req.body);
-    users.findOne({username: req.body.username}, function(err, user){
-        if (err) return res.status(500).end(err);
-        if (user) return res.status(409).end("Username " + req.body.username + " already exists");
-        users.insert(data, function (err, user) {
-            if (err) return res.status(500).end(err);
-            return res.json(user);
-        });
-    });
+  req.checkBody('username', 'Invalid username').notEmpty();
+  req.checkBody('password', 'Invalid password').notEmpty();
+  req.sanitizeBody('username').escape();
+  req.sanitizeBody('password').escape();
+
+  var data = new User(req.body);
+  users.findOne({username: req.body.username}, function(err, user){
+      if (err) return res.status(500).end(err);
+      if (user) return res.status(409).end("Username " + req.body.username + " already exists");
+      users.insert(data, function (err, user) {
+          if (err) return res.status(500).end(err);
+          return res.json(user);
+      });
+  });
 });
 
 // Post a Comment
 app.post('/api/comment/', function (req, res, next) {
+  req.checkBody('username', 'Invalid username').notEmpty();
+  req.checkBody('pid', 'Invalid picture ID').notEmpty();
+  req.checkBody('author', 'Invalid author').notEmpty();
+  req.checkBody('content', 'Invalid content').notEmpty();
+  req.sanitizeBody('username').escape();
+  req.sanitizeBody('pid').escape();
+  req.sanitizeBody('author').escape();
+  req.sanitizeBody('content').escape();
+
   if (!req.session.user) return res.status(403).end("Forbidden");
   req.body.username = req.session.user.username;
   var comment =  new Comment(req.body);
@@ -173,6 +201,13 @@ addPicture = function (info, res, next){
 
 // Store a Picture on the Web
 app.post('/api/picture/url/',function (req, res, next) {
+  req.checkBody('link', 'Invalid picture link').notEmpty();
+  req.checkBody('author', 'Invalid author').notEmpty();
+  req.checkBody('content', 'Invalid content').notEmpty();
+  req.sanitizeBody('link');
+  req.sanitizeBody('author').escape();
+  req.sanitizeBody('content').escape();
+
   if (req.body.author !== req.session.user.username) return res.status(403).send("Forbidden");
   var info = req.body;
   info.upload = false;
@@ -183,6 +218,13 @@ app.post('/api/picture/url/',function (req, res, next) {
 // Store a Picture Locally
 app.post('/api/picture/local/', upload.single('picture'), function (req, res, next) {
   var info = JSON.parse(req.body.data);
+  req.check('link', 'Invalid picture link').notEmpty();
+  req.check('author', 'Invalid author').notEmpty();
+  req.check('content', 'Invalid content').notEmpty();
+  req.sanitize('link');
+  req.sanitize('author').escape();
+  req.sanitize('content').escape();
+  console.log(info.author, req.session.user.username, req.body.data);
   if (info.author !== req.session.user.username) return res.status(403).send("Forbidden");
   info.upload = true;
   info.link = req.file;
@@ -195,6 +237,8 @@ app.post('/api/picture/local/', upload.single('picture'), function (req, res, ne
 
 // Get Picture Given ID
 app.get('/api/picture/:id/', function (req, res, next) {
+  req.check('id', 'Invalid picture id').notEmpty();
+  req.sanitize('id').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
   var nid = parseInt(find_id, 10);
@@ -222,6 +266,8 @@ app.get('/api/picture/:id/', function (req, res, next) {
 });
 
 app.get('/api/picture/gallery/:user/', function (req, res, next) {
+  req.check('user', 'Invalid user').notEmpty();
+  req.sanitize('user').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
     pictures.find({author: req.params.user}).sort({ id: 1 }).limit(1).exec(function (err, docs) {
       if(docs.length === 0) return res.status(400).end("No pictures in db");
@@ -233,6 +279,8 @@ app.get('/api/picture/gallery/:user/', function (req, res, next) {
 
 // Get locally stored picture
 app.get('/api/picture/:id/local', function (req, res, next) {
+  req.check('id', 'Invalid picture id').notEmpty();
+  req.sanitize('id').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var nid = parseInt(req.params.id, 10);
   pictures.findOne({id: nid}, function(err, pic){
@@ -247,6 +295,13 @@ app.get('/api/picture/:id/local', function (req, res, next) {
 
 // Get Comments given Picture ID, Offset, and Amount (Page)
 app.get('/api/comments/:id/:offset/:amount', function (req, res, next) {
+  req.check('id', 'Invalid picture id').notEmpty();
+  req.sanitize('id').escape();
+  req.check('offset', 'Invalid offset').notEmpty();
+  req.sanitize('offset').escape();
+  req.check('amount', 'Invalid amount').notEmpty();
+  req.sanitize('amount').escape();
+
   if (!req.session.user) return res.status(403).end("Forbidden");
   var f_id = parseInt(req.params.id, 10);
   var offset = parseInt(req.params.offset, 10);
@@ -260,6 +315,8 @@ app.get('/api/comments/:id/:offset/:amount', function (req, res, next) {
 
 // Get Next Picture
 app.get('/api/picture/next/:currid/', function (req, res, next) {
+  req.check('currid', 'Invalid picture id').notEmpty();
+  req.sanitize('currid').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$gt: curr_id}}).sort({id: 1 }).limit(1).exec(function(err, pic){
@@ -272,6 +329,8 @@ app.get('/api/picture/next/:currid/', function (req, res, next) {
 
 // Get Prev Picture
 app.get('/api/picture/prev/:currid/', function (req, res, next) {
+  req.check('currid', 'Invalid picture id').notEmpty();
+  req.sanitize('currid').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}}).sort({id: -1 }).limit(1).exec(function(err, pic){
@@ -284,6 +343,10 @@ app.get('/api/picture/prev/:currid/', function (req, res, next) {
 
 // Get Next Picture Given User gallery
 app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
+  req.check('currid', 'Invalid picture id').notEmpty();
+  req.sanitize('currid').escape();
+  req.check('user', 'Invalid user').notEmpty();
+  req.sanitize('user').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$gt: curr_id}, author: req.params.user}).sort({id: 1 }).limit(1).exec(function(err, pic){
@@ -296,6 +359,10 @@ app.get('/api/picture/:user/next/:currid/', function (req, res, next) {
 
 // Get Prev Picture Given User gallery
 app.get('/api/picture/:user/prev/:currid/', function (req, res, next) {
+  req.check('currid', 'Invalid picture id').notEmpty();
+  req.sanitize('currid').escape();
+  req.check('user', 'Invalid user').notEmpty();
+  req.sanitize('user').escape();
   var curr_id = parseInt(req.params.currid, 10);
   pictures.find({id: {$lt: curr_id}, author: req.params.user}).sort({id: -1 }).limit(1).exec(function(err, pic){
     if(pic.length === 0) return res.status(404).end("There is no previous picture.");
@@ -316,6 +383,11 @@ var getPicture = function(pic, next){
 
 // Get List of users that have gallery
 app.get('/api/users/galleried/:offset/:amount', function(req, res, next){
+  req.check('offset', 'Invalid offset').notEmpty();
+  req.sanitize('offset').escape();
+  req.check('amount', 'Invalid amount').notEmpty();
+  req.sanitize('amount').escape();
+
   if (!req.session.user) return res.status(403).end("Forbidden");
   pictures.find({}).sort({author: 1}).exec(function (err, allPictures){
     var users = allPictures.map(function(e){return e.author});
@@ -336,6 +408,8 @@ app.get('/api/users/galleried/:offset/:amount', function(req, res, next){
 
 // Delete Picture
 app.delete('/api/picture/:id/', function (req, res, next) {
+  req.check('id', 'Invalid id').notEmpty();
+  req.sanitize('id').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   var find_id = req.params.id;
   var nid = parseInt(find_id, 10);
@@ -356,6 +430,10 @@ app.delete('/api/picture/:id/', function (req, res, next) {
 
 // Delete Comment
 app.delete('/api/comment/:pid/:cid/', function (req, res, next) {
+  req.check('pid', 'Invalid picture id').notEmpty();
+  req.sanitize('pid').escape();
+  req.check('cid', 'Invalid comment id').notEmpty();
+  req.sanitize('cid').escape();
   if (!req.session.user) return res.status(403).end("Forbidden");
   comments.findOne({ _id: req.params.cid }, function(err, comment){
     if (err) return res.status(404).end("Message id:" + req.params.id + " does not exists");
@@ -373,7 +451,19 @@ app.delete('/api/comment/:pid/:cid/', function (req, res, next) {
 });
 
 
-var http = require("http");
-http.createServer(app).listen(3000, function(){
-    console.log('HTTP on port 3000');
+// var http = require("http");
+// http.createServer(app).listen(3000, function(){
+//     console.log('HTTP on port 3000');
+// });
+
+var fs = require('fs');
+var https = require('https');
+var privateKey = fs.readFileSync( 'server.key' );
+var certificate = fs.readFileSync( 'server.crt' );
+var config = {
+        key: privateKey,
+        cert: certificate
+};
+https.createServer(config, app).listen(3000, function () {
+    console.log('HTTPS on port 3000');
 });
