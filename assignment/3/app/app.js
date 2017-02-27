@@ -1,7 +1,7 @@
 var crypto = require('crypto');
 var path = require('path');
 var expressValidator = require('express-validator');
-var cookieParser = require('cookie-parser')
+var cookieParser = require('cookie-parser');
 var express = require('express');
 var app = express();
 
@@ -25,15 +25,15 @@ var getID = function(itype, next){
     // Add id to ids db
     if (!curr_id){
       var info = [];
-      info['type'] = itype;
-      info['id'] = 0;
+      info.type = itype;
+      info.id = 0;
       var data = new ID(info);
       ids.insert(data, function(err, nid){
         if(nid) next(0);
       });
     }else{
       // Update the curr id
-      var new_id = curr_id['id']+1;
+      var new_id = curr_id.id + 1;
       ids.update({ type: itype }, {$set: {id: new_id}}, {}, function (err, numReplaced) {
         if(numReplaced) next(new_id);
       });
@@ -390,10 +390,10 @@ app.get('/api/users/galleried/:offset/:amount', function(req, res, next){
 
   if (!req.session.user) return res.status(403).end("Forbidden");
   pictures.find({}).sort({author: 1}).exec(function (err, allPictures){
-    var users = allPictures.map(function(e){return e.author});
+    var users = allPictures.map(function(e){return e.author;});
     var selectUsers = users.filter(function(elem, index, self) {
       return index == self.indexOf(elem);
-    })
+    });
     var cutoff = selectUsers.length - req.params.offset;
     if (cutoff <= 0){
       cutoff = selectUsers.length;
@@ -437,7 +437,7 @@ app.delete('/api/comment/:pid/:cid/', function (req, res, next) {
   if (!req.session.user) return res.status(403).end("Forbidden");
   comments.findOne({ _id: req.params.cid }, function(err, comment){
     if (err) return res.status(404).end("Message id:" + req.params.id + " does not exists");
-    var pic_id = parseInt(req.params.pid, 10)
+    var pic_id = parseInt(req.params.pid, 10);
     pictures.findOne({ id: pic_id }, function(err, picture){
       if (err) return res.status(404).end("Picture id:" + req.params.pid + " does not exists");
       if (comment.author !== req.session.user.username && picture.author !== req.session.user.username) return res.status(403).send("Unauthorized");

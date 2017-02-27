@@ -35,7 +35,7 @@ var model = (function(){
 
      model.createUser = function(data, callback){
          doAjax('PUT', '/api/users/', data, true, callback);
-     }
+     };
 
 
     // create
@@ -58,12 +58,12 @@ var model = (function(){
       if (data) info = JSON.parse(data);
       if (err) return document.dispatchEvent(new CustomEvent("404", {'detail': err })) ;
       doAjax('GET', '/api/picture/' + info.id +'/', data, true, model.loadPicture);
-    }
+    };
 
     // delete
     model.deletePicture = function (data){
       doAjax('DELETE', '/api/picture/' + data.id +'/', data, true, function(err, data){
-        model.reloadPicture(err)
+        model.reloadPicture(err);
       });
     };
 
@@ -71,7 +71,7 @@ var model = (function(){
     model.changePic = function (data){
       var api_link = "";
       if(data.user_gala){
-        api_link = "/" + data.user_gala
+        api_link = "/" + data.user_gala;
       }
       if(data.i >= 0){
         doAjax('GET', '/api/picture' + api_link + '/next/' + data.id +'/', data, true, model.loadPicture);
@@ -161,11 +161,11 @@ var model = (function(){
     model.getActiveUsername = function(callback){
       var data = localStorage.getItem("user");
       if (data){
-          var username = JSON.parse(data)
+          var username = JSON.parse(data);
           return callback(null, username);
       }
       return callback("No active user", null);
-    }
+    };
 
     return model;
 

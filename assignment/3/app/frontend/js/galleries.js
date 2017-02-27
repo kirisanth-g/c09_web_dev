@@ -1,3 +1,4 @@
+/* jshint esversion: 6*/
 var galleries = (function(){
   var galleries = {};
   var offset = 0;
