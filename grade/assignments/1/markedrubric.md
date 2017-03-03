@@ -117,7 +117,7 @@ N/A
 **Grade (TA only)**
 
 - max2: 40
-- score2: 22
+- score2: 33
  
 ---
 
@@ -183,8 +183,6 @@ N/A
 
 TA comments:
     - file upload not properly implemented
-    - URL not properly constructed 
-    - http parameters should change during navigation, should link directly to images and render 404 if not found, etc. These incorrect implementations propagated from error above
 
 
 ## Code quality and organization
