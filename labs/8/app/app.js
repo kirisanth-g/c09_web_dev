@@ -14,6 +14,9 @@ var Datastore = require('nedb');
 var messages = new Datastore({ filename: 'db/messages.db', autoload: true, timestampData : true});
 var users = new Datastore({ filename: 'db/users.db', autoload: true });
 
+var Memcached = require('memcached');
+var memcached = new Memcached('localhost:11211');
+
 // Message constructor
 var Message = function(message){
         this.content = message.content;
