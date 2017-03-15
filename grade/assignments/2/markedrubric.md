@@ -7,7 +7,7 @@ permalink: work/assignments/2/rubric/
 **Grade (TA only)**
 
 - max: 120
-- score: 47
+- score: 52
 
 ---
 
@@ -45,6 +45,11 @@ I hereby declared that the work submitted here is mine and its production compli
 
 - max1: 50
 - score1: 10
+TA comments:
+    10 - (error handling) generates a lot of console errors throughout use of app
+    5 - file upload functionality doesn't work
+    - each use of plural nouns for set of resources for the URL
+    - each unhandled errors in call back functions
 ---
 
 
@@ -181,7 +186,11 @@ Minor things are checked, but for regular use it will be fine.
 **Grade (TA only)**
 
 - max2: 30
-- score2: 10
+- score2: 15
+TA comments:
+    5 - submits epmty image upload form
+    5 - file upload doesn't work
+    5 - uploads coments for nonexistent images
 
 ---
 
@@ -222,6 +231,8 @@ your comments go here.
 
 - max3: 20
 - score3: 12 
+    4 - wrong CURL samples
+    4 - incomplete documentation
 
 ---
 
@@ -259,7 +270,8 @@ None.
 **Grade (TA only)**
 
 - max3: 20
-- score3: 15 
+- score3: 15
+    - generated 8 jshint report errors
 
 ---
 
