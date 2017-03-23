@@ -7,7 +7,7 @@ permalink: work/assignments/3/rubric/
 **Grade (TA only)**
 
 - max: 100 
-- score: 86
+- score: 89
 
 ---
 
@@ -44,11 +44,7 @@ I hereby declared that the work submitted here is mine and its production compli
 **Grade (TA only)**
 
 - max1: 50
-- score1: 47
-    20/20
-    12/12
-    7/10 uses PUT instead of POST for user sign up
-    8/8
+- score1: 50
 ---
 
 
@@ -101,10 +97,6 @@ your comments go here.
 
 - max2: 20
 - score2: 20
-    2/2
-    6/6
-    9/9
-    3/3
 ---
 
 1. HTTPS is: [select one]
@@ -204,10 +196,7 @@ your comments go here.
 
 - max5: 15
 - score3: 9
-    2/2
-    4/4
-    0/4 generates debugging messages both in front + back end
-    3/5
+    - generates debugging messages both in front + back end
 ---
 
 1. The repository is overall: [select one]
