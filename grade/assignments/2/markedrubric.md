@@ -7,7 +7,7 @@ permalink: work/assignments/2/rubric/
 **Grade (TA only)**
 
 - max: 120
-- score: 52
+- score: 57
 
 ---
 
@@ -186,7 +186,7 @@ Minor things are checked, but for regular use it will be fine.
 **Grade (TA only)**
 
 - max2: 30
-- score2: 15
+- score2: 20
 TA comments:
     5 - submits epmty image upload form
     5 - file upload doesn't work
